@@ -170,7 +170,7 @@
     <div class="container">
       <nav>
         <div class="logo">🌱 AgroCloud Pro</div>
-        <span class="tag">Professional UI • farmer friendly</span>
+        <span class="tag">Professional UI • Farmer Friendly</span>
       </nav>
       <section class="hero">
         <h1>Smart Agro Cloud Platform with Real API Data</h1>
@@ -206,6 +206,7 @@
         <div class="row" style="margin-top:10px;">
           <input id="detectApiUrl" type="url" placeholder="Detection API URL (POST)" />
           <input id="detectApiKey" type="text" placeholder="API Key (optional)" />
+          <input id="detectAuthScheme" type="text" placeholder="Auth scheme (e.g., Bearer)" />
         </div>
         <div class="row" style="margin-top:8px;">
           <button id="analyzeBtn">Analyze from API</button>
@@ -231,7 +232,7 @@
         <div class="stat"><small>Temperature</small><strong id="temp">--</strong></div>
         <div class="stat"><small>Wind</small><strong id="wind">--</strong></div>
         <div class="stat"><small>Rain</small><strong id="rain">--</strong></div>
-        <div class="stat"><small>Time</small><strong id="time">--</strong></div>
+        <div class="stat"><small>Time (UTC)</small><strong id="time">--</strong></div>
       </div>
 
       <iframe id="mapFrame" title="Selected location map"></iframe>
@@ -252,6 +253,7 @@
     const preview = document.getElementById("preview");
     const detectApiUrl = document.getElementById("detectApiUrl");
     const detectApiKey = document.getElementById("detectApiKey");
+    const detectAuthScheme = document.getElementById("detectAuthScheme");
     const analyzeBtn = document.getElementById("analyzeBtn");
     const detectionResult = document.getElementById("detectionResult");
 
@@ -276,7 +278,7 @@
       const searchRes = await fetch(searchUrl);
       if (!searchRes.ok) throw new Error("Irrigation API request failed");
       const searchData = await searchRes.json();
-      const topTitle = Array.isArray(searchData?.[1]) ? searchData[1][0] : null;
+      const topTitle = (Array.isArray(searchData[1]) && searchData[1].length > 0) ? searchData[1][0] : null;
       if (!topTitle) return "No answer found from API for this query. Please add crop name for better result.";
 
       const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(topTitle)}`;
@@ -337,7 +339,8 @@
           canvas.height = Math.round(img.height * scale);
           const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL("image/jpeg", quality));
+          const outputType = (file.type === "image/png" || file.type === "image/webp") ? file.type : "image/jpeg";
+          resolve(canvas.toDataURL(outputType, quality));
         };
         img.onerror = reject;
         img.src = originalDataUrl;
@@ -348,6 +351,7 @@
       const file = imageInput.files[0];
       const apiUrl = detectApiUrl.value.trim();
       const apiKey = detectApiKey.value.trim();
+      const authScheme = (detectAuthScheme.value.trim() || "Bearer");
 
       if (!file) {
         detectionResult.value = "Please select crop image first.";
@@ -362,7 +366,7 @@
       try {
         const imageData = await compressImageToDataUrl(file);
         const headers = { "Content-Type": "application/json" };
-        if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
+        if (apiKey) headers["Authorization"] = `${authScheme} ${apiKey}`;
 
         const res = await fetch(apiUrl, {
           method: "POST",
@@ -398,6 +402,7 @@
       try {
         const url = `https://geocode.maps.co/search?q=${encodeURIComponent(query)}`;
         const res = await fetch(url);
+        if (res.status === 429) throw new Error("Location API rate limit");
         if (!res.ok) throw new Error("Location API failed");
         const data = await res.json();
 

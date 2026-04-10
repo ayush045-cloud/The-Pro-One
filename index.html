@@ -78,6 +78,12 @@
     .card h2 { margin: 0 0 8px; color: var(--green-700); font-size: 1.1rem; }
     .card p { margin: 0 0 12px; color: var(--muted); }
     .hint { color: var(--muted); font-size: 0.88rem; margin-top: 8px; }
+    .steps {
+      margin: 10px 0 12px;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
 
     .chat-box {
       height: 220px;
@@ -213,6 +219,13 @@
         </div>
         <textarea id="detectionResult" readonly placeholder="API result will appear here..."></textarea>
         <p class="hint">Security note: for production, call detection APIs from your back end instead of exposing API keys in browser.</p>
+        <ol class="steps">
+          <li>Create or choose a crop-detection API endpoint that accepts <code>POST</code> JSON body <code>{"image":"base64-data-url"}</code>.</li>
+          <li>If required, generate API key/token on that platform and confirm auth scheme (usually <code>Bearer</code>).</li>
+          <li>Enable CORS on your API for your site origin, method <code>POST</code>, and headers <code>Content-Type, Authorization</code>.</li>
+          <li>Paste your endpoint in <strong>Detection API URL (POST)</strong>.</li>
+          <li>Paste token in <strong>API Key</strong> and scheme in <strong>Auth scheme</strong>, then upload image and click <strong>Analyze from API</strong>.</li>
+        </ol>
       </article>
     </section>
 
@@ -263,6 +276,7 @@
     const weatherBtn = document.getElementById("weatherBtn");
     const mapFrame = document.getElementById("mapFrame");
     const weatherNote = document.getElementById("weatherNote");
+    detectAuthScheme.value = "Bearer";
 
     function addMessage(text, type) {
       const div = document.createElement("div");
@@ -374,8 +388,14 @@
           body: JSON.stringify({ image: imageData })
         });
 
-        const text = await res.text();
-        detectionResult.value = text;
+        const isJson = (res.headers.get("content-type") || "").toLowerCase().includes("application/json");
+        const payload = isJson ? await res.json() : await res.text();
+        if (!res.ok) {
+          const formattedError = typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);
+          detectionResult.value = `API error ${res.status}\n${formattedError}`;
+          return;
+        }
+        detectionResult.value = typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);
       } catch (error) {
         detectionResult.value = "Detection API request failed.";
       }

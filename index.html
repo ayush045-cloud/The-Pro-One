@@ -212,7 +212,7 @@
           <button id="analyzeBtn">Analyze from API</button>
         </div>
         <textarea id="detectionResult" readonly placeholder="API result will appear here..."></textarea>
-        <p class="hint">Security note: for production, call detection APIs from your backend instead of exposing API keys in browser.</p>
+        <p class="hint">Security note: for production, call detection APIs from your back end instead of exposing API keys in browser.</p>
       </article>
     </section>
 
@@ -279,7 +279,7 @@
       if (!searchRes.ok) throw new Error("Irrigation API request failed");
       const searchData = await searchRes.json();
       const topTitle = (Array.isArray(searchData[1]) && searchData[1].length > 0) ? searchData[1][0] : null;
-      if (!topTitle) return "No answer found from API for this query. Please add crop name for better result.";
+      if (!topTitle) return "No answer found from API for this query. Please include the crop name for better results.";
 
       const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(topTitle)}`;
       const summaryRes = await fetch(summaryUrl);
@@ -402,7 +402,7 @@
       try {
         const url = `https://geocode.maps.co/search?q=${encodeURIComponent(query)}`;
         const res = await fetch(url);
-        if (res.status === 429) throw new Error("Location API rate limit");
+        if (res.status === 429) throw new Error("Location API rate limit exceeded");
         if (!res.ok) throw new Error("Location API failed");
         const data = await res.json();
 

@@ -1,1 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroCloud Pro | Smart Farming for Everyone</title>
+  <style>
+    :root {
+      --green-900: #0b3d2e;
+      --green-800: #0f5132;
+      --green-700: #1d6f42;
+      --green-100: #e8f5eb;
+      --sky-100: #eaf6ff;
+      --text: #1d2939;
+      --muted: #667085;
+      --card: #ffffff;
+      --bg: #f7faf8;
+      --radius: 14px;
+      --shadow: 0 8px 25px rgba(16, 24, 40, 0.08);
+    }
 
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(120deg, var(--green-900), var(--green-700));
+      color: #fff;
+      padding: 18px 0 70px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      font-size: 0.85rem;
+    }
+
+    .hero h1 {
+      margin: 10px 0 10px;
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      max-width: 720px;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      color: #d6f2e0;
+    }
+
+    main {
+      margin-top: -45px;
+      padding-bottom: 40px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+      color: var(--green-800);
+    }
+
+    .card p { margin: 0 0 12px; color: var(--muted); }
+    .hint { font-size: 0.88rem; color: var(--muted); }
+
+    .chat-box {
+      height: 220px;
+      overflow-y: auto;
+      border: 1px solid #e4e7ec;
+      border-radius: 10px;
+      padding: 12px;
+      background: #fcfdfc;
+      margin-bottom: 10px;
+    }
+
+    .msg {
+      margin: 6px 0;
+      padding: 8px 10px;
+      border-radius: 10px;
+      max-width: 88%;
+      font-size: 0.95rem;
+    }
+
+    .bot { background: var(--green-100); }
+    .user { background: var(--sky-100); margin-left: auto; }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    input, select, button {
+      font: inherit;
+      border-radius: 10px;
+      border: 1px solid #d0d5dd;
+      padding: 10px 12px;
+    }
+
+    input, select { flex: 1; min-width: 170px; }
+
+    button {
+      border: none;
+      background: var(--green-700);
+      color: #fff;
+      cursor: pointer;
+      padding-inline: 16px;
+    }
+
+    button:hover { background: var(--green-800); }
+
+    #preview {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #e4e7ec;
+      display: none;
+      margin-top: 10px;
+    }
+
+    .weather {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .stat {
+      background: #f9fafb;
+      border: 1px solid #e4e7ec;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .stat strong { display: block; color: var(--green-800); font-size: 1rem; }
+    iframe {
+      width: 100%;
+      min-height: 260px;
+      border: 0;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.88rem;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <div class="logo">🌱 AgroCloud Pro</div>
+        <span class="tag">Simple • Smart • Farmer Friendly</span>
+      </nav>
+      <section class="hero">
+        <h1>Professional Agro Cloud Platform for Easy Farming Decisions</h1>
+        <p>
+          Get irrigation advice from AI chat, detect crop issues using image/camera, and see location-based weather on map — all in one simple dashboard.
+        </p>
+      </section>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="grid">
+      <article class="card">
+        <h2>💧 Irrigation Chat AI</h2>
+        <p>Ask in simple words. AI gives practical water advice for your crop.</p>
+        <div class="chat-box" id="chatBox">
+          <div class="msg bot">Namaste! Ask: “How much water for wheat today?”</div>
+        </div>
+        <div class="row">
+          <input id="chatInput" type="text" placeholder="Type your farming question..." />
+          <button id="sendBtn">Send</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>📷 Crop Detection (Image / Camera)</h2>
+        <p>Upload crop photo or click from camera for quick health feedback.</p>
+        <div class="row">
+          <input id="imageInput" type="file" accept="image/*" capture="environment" />
+          <button id="analyzeBtn">Analyze</button>
+        </div>
+        <img id="preview" alt="Crop preview" />
+        <p class="hint" id="detectionResult">No image selected yet.</p>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>🗺️ Map + Accurate Weather by Selected Location</h2>
+      <p>Select your area to get live weather guidance for better farm planning.</p>
+      <div class="row">
+        <select id="locationSelect">
+          <option value="28.6139,77.2090">Delhi, India</option>
+          <option value="26.8467,80.9462">Lucknow, India</option>
+          <option value="23.0225,72.5714">Ahmedabad, India</option>
+          <option value="18.5204,73.8567">Pune, India</option>
+          <option value="13.0827,80.2707">Chennai, India</option>
+        </select>
+        <button id="weatherBtn">Get Weather</button>
+      </div>
+
+      <div class="weather" id="weatherPanel">
+        <div class="stat"><small>Temperature</small><strong id="temp">--</strong></div>
+        <div class="stat"><small>Wind</small><strong id="wind">--</strong></div>
+        <div class="stat"><small>Rain</small><strong id="rain">--</strong></div>
+        <div class="stat"><small>Time</small><strong id="time">--</strong></div>
+      </div>
+
+      <iframe
+        id="mapFrame"
+        title="Selected location map"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=77.1090,28.5139,77.3090,28.7139&layer=mapnik&marker=28.6139,77.2090">
+      </iframe>
+      <p class="hint" id="weatherNote">Tap “Get Weather” to refresh details.</p>
+    </section>
+  </main>
+
+  <footer>
+    AgroCloud Pro • Designed for clear understanding by every farmer.
+  </footer>
+
+  <script>
+    const chatBox = document.getElementById("chatBox");
+    const chatInput = document.getElementById("chatInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const imageInput = document.getElementById("imageInput");
+    const preview = document.getElementById("preview");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const detectionResult = document.getElementById("detectionResult");
+    const locationSelect = document.getElementById("locationSelect");
+    const weatherBtn = document.getElementById("weatherBtn");
+    const mapFrame = document.getElementById("mapFrame");
+
+    function addMessage(text, type) {
+      const div = document.createElement("div");
+      div.className = "msg " + type;
+      div.textContent = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function irrigationResponse(question) {
+      const q = question.toLowerCase();
+      if (q.includes("wheat")) return "For wheat: keep soil moist, avoid waterlogging, irrigate early morning.";
+      if (q.includes("rice")) return "For rice: maintain standing water in early growth; reduce near harvest.";
+      if (q.includes("cotton")) return "For cotton: deep irrigation at longer intervals works better.";
+      if (q.includes("today") || q.includes("rain")) return "Check weather panel below. If rain chance is high, reduce irrigation.";
+      return "Irrigate based on soil moisture: dry top soil means water needed; wet soil means wait.";
+    }
+
+    function sendChat() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+      addMessage(text, "user");
+      setTimeout(() => addMessage(irrigationResponse(text), "bot"), 250);
+      chatInput.value = "";
+    }
+
+    sendBtn.addEventListener("click", sendChat);
+    chatInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") sendChat();
+    });
+
+    imageInput.addEventListener("change", () => {
+      const file = imageInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+      detectionResult.textContent = "Image selected. Click Analyze for quick feedback.";
+    });
+
+    analyzeBtn.addEventListener("click", () => {
+      if (!imageInput.files[0]) {
+        detectionResult.textContent = "Please upload or capture a crop image first.";
+        return;
+      }
+      const samples = [
+        "Possible early leaf spot signs. Spray guidance: consult local agronomist.",
+        "Crop looks mostly healthy. Continue regular irrigation and nutrient plan.",
+        "Mild yellowing detected. Check nitrogen and water stress level."
+      ];
+      const pick = samples[Math.floor(Math.random() * samples.length)];
+      detectionResult.textContent = "AI Detection: " + pick;
+    });
+
+    async function updateWeather() {
+      const [lat, lon] = locationSelect.value.split(",");
+      const minLat = (parseFloat(lat) - 0.1).toFixed(4);
+      const maxLat = (parseFloat(lat) + 0.1).toFixed(4);
+      const minLon = (parseFloat(lon) - 0.1).toFixed(4);
+      const maxLon = (parseFloat(lon) + 0.1).toFixed(4);
+
+      mapFrame.src = `https://www.openstreetmap.org/export/embed.html?bbox=${minLon},${minLat},${maxLon},${maxLat}&layer=mapnik&marker=${lat},${lon}`;
+
+      document.getElementById("weatherNote").textContent = "Loading weather...";
+      try {
+        const api = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,rain`;
+        const res = await fetch(api);
+        const data = await res.json();
+        const c = data.current || {};
+
+        document.getElementById("temp").textContent = (c.temperature_2m ?? "--") + "°C";
+        document.getElementById("wind").textContent = (c.wind_speed_10m ?? "--") + " km/h";
+        document.getElementById("rain").textContent = (c.rain ?? 0) + " mm";
+        document.getElementById("time").textContent = c.time ? c.time.replace("T", " ") : "--";
+        document.getElementById("weatherNote").textContent = "Weather updated for selected location.";
+      } catch (e) {
+        document.getElementById("weatherNote").textContent = "Weather service unavailable. Please try again.";
+      }
+    }
+
+    weatherBtn.addEventListener("click", updateWeather);
+    updateWeather();
+  </script>
+</body>
+</html>

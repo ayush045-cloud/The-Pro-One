@@ -388,10 +388,11 @@
           body: JSON.stringify({ image: imageData })
         });
 
-        const isJson = (res.headers.get("content-type") || "").includes("application/json");
+        const isJson = (res.headers.get("content-type") || "").toLowerCase().includes("application/json");
         const payload = isJson ? await res.json() : await res.text();
         if (!res.ok) {
-          detectionResult.value = `API error ${res.status}: ${typeof payload === "string" ? payload : JSON.stringify(payload, null, 2)}`;
+          const formattedError = typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);
+          detectionResult.value = `API error ${res.status}\n${formattedError}`;
           return;
         }
         detectionResult.value = typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);

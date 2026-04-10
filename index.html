@@ -170,7 +170,7 @@
     <div class="container">
       <nav>
         <div class="logo">🌱 AgroCloud Pro</div>
-        <span class="tag">Professional UI • Farmer Friendly</span>
+        <span class="tag">Professional UI • farmer friendly</span>
       </nav>
       <section class="hero">
         <h1>Smart Agro Cloud Platform with Real API Data</h1>
@@ -193,7 +193,7 @@
           <input id="chatInput" type="text" placeholder="Example: Best irrigation for wheat in summer" />
           <button id="sendBtn">Send</button>
         </div>
-        <p class="hint">Source: DuckDuckGo Instant Answer API.</p>
+        <p class="hint">Source: Wikipedia APIs (live web data).</p>
       </article>
 
       <article class="card">
@@ -211,6 +211,7 @@
           <button id="analyzeBtn">Analyze from API</button>
         </div>
         <textarea id="detectionResult" readonly placeholder="API result will appear here..."></textarea>
+        <p class="hint">Security note: for production, call detection APIs from your backend instead of exposing API keys in browser.</p>
       </article>
     </section>
 
@@ -270,19 +271,19 @@
     }
 
     async function getIrrigationAnswer(question) {
-      const q = encodeURIComponent(question + " irrigation farming");
-      const url = `https://api.duckduckgo.com/?q=${q}&format=json&no_redirect=1&no_html=1&skip_disambig=1`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Irrigation API request failed");
-      const data = await res.json();
+      const q = encodeURIComponent(question);
+      const searchUrl = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${q}&limit=1&namespace=0&format=json&origin=*`;
+      const searchRes = await fetch(searchUrl);
+      if (!searchRes.ok) throw new Error("Irrigation API request failed");
+      const searchData = await searchRes.json();
+      const topTitle = Array.isArray(searchData?.[1]) ? searchData[1][0] : null;
+      if (!topTitle) return "No answer found from API for this query. Please add crop name for better result.";
 
-      if (data.AbstractText) return data.AbstractText;
-      if (data.Answer) return data.Answer;
-      if (Array.isArray(data.RelatedTopics) && data.RelatedTopics.length) {
-        const first = data.RelatedTopics.find(item => item.Text) || data.RelatedTopics[0];
-        if (first && first.Text) return first.Text;
-      }
-      return "No answer found from API for this query. Please ask with crop name and condition.";
+      const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(topTitle)}`;
+      const summaryRes = await fetch(summaryUrl);
+      if (!summaryRes.ok) throw new Error("Irrigation summary API request failed");
+      const summaryData = await summaryRes.json();
+      return summaryData.extract || "No summary available from API.";
     }
 
     async function sendChat() {
@@ -324,6 +325,25 @@
       });
     }
 
+    async function compressImageToDataUrl(file, maxWidth = 1024, quality = 0.8) {
+      const originalDataUrl = await fileToDataUrl(file);
+      const img = new Image();
+
+      return new Promise((resolve, reject) => {
+        img.onload = () => {
+          const scale = Math.min(1, maxWidth / img.width);
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        };
+        img.onerror = reject;
+        img.src = originalDataUrl;
+      });
+    }
+
     analyzeBtn.addEventListener("click", async () => {
       const file = imageInput.files[0];
       const apiUrl = detectApiUrl.value.trim();
@@ -340,7 +360,7 @@
 
       detectionResult.value = "Calling detection API...";
       try {
-        const imageData = await fileToDataUrl(file);
+        const imageData = await compressImageToDataUrl(file);
         const headers = { "Content-Type": "application/json" };
         if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
 
@@ -376,8 +396,8 @@
       locationSelect.innerHTML = "";
 
       try {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
-        const res = await fetch(url, { headers: { "Accept": "application/json" } });
+        const url = `https://geocode.maps.co/search?q=${encodeURIComponent(query)}`;
+        const res = await fetch(url);
         if (!res.ok) throw new Error("Location API failed");
         const data = await res.json();
 
@@ -419,10 +439,16 @@
         const data = await res.json();
         const c = data.current || {};
 
-        document.getElementById("temp").textContent = (c.temperature_2m ?? "--") + "°C";
-        document.getElementById("wind").textContent = (c.wind_speed_10m ?? "--") + " km/h";
-        document.getElementById("rain").textContent = (c.rain ?? "--") + " mm";
-        document.getElementById("time").textContent = c.time ? c.time.replace("T", " ") : "--";
+        const weatherMapping = {
+          temp: { value: c.temperature_2m, unit: "°C" },
+          wind: { value: c.wind_speed_10m, unit: " km/h" },
+          rain: { value: c.rain, unit: " mm" },
+          time: { value: c.time ? c.time.replace("T", " ") : "--", unit: "" }
+        };
+
+        Object.entries(weatherMapping).forEach(([id, field]) => {
+          document.getElementById(id).textContent = (field.value ?? "--") + field.unit;
+        });
         weatherNote.textContent = "Live weather updated from API.";
       } catch (error) {
         weatherNote.textContent = "Unable to fetch weather API data.";

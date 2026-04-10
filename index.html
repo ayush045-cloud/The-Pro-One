@@ -28,7 +28,7 @@
       margin: 0;
       font-family: "Segoe UI", Roboto, Arial, sans-serif;
       color: var(--text);
-      background: linear-gradient(180deg, #f7fffb 0%, var(--bg) 45%, #edf4f2 100%);
+      background: var(--bg);
       line-height: 1.6;
     }
 
@@ -152,7 +152,7 @@
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--green-500);
-      box-shadow: 0 0 0 3px rgba(46, 168, 106, 0.18);
+      box-shadow: 0 0 0 3px rgba(46, 168, 106, 0.32);
     }
 
     input, select, textarea { flex: 1; min-width: 180px; }
@@ -223,6 +223,14 @@
       .row > input,
       .row > select,
       .row > button { min-width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
     }
   </style>
 </head>

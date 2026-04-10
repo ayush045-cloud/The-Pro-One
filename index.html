@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgroCloud Pro | Smart Farming for Everyone</title>
+  <title>AgroCloud Pro | API-Powered Farming Dashboard</title>
   <style>
     :root {
       --green-900: #0b3d2e;
-      --green-800: #0f5132;
       --green-700: #1d6f42;
       --green-100: #e8f5eb;
       --sky-100: #eaf6ff;
@@ -28,55 +27,39 @@
       line-height: 1.5;
     }
 
-    .container {
-      width: min(1100px, 92%);
-      margin: 0 auto;
-    }
+    .container { width: min(1120px, 92%); margin: 0 auto; }
 
     header {
       background: linear-gradient(120deg, var(--green-900), var(--green-700));
       color: #fff;
-      padding: 18px 0 70px;
+      padding: 20px 0 72px;
     }
 
     nav {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 12px;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
 
-    .logo {
-      font-size: 1.2rem;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-
+    .logo { font-size: 1.2rem; font-weight: 700; }
     .tag {
-      display: inline-block;
+      background: rgba(255, 255, 255, 0.15);
       padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.14);
       border-radius: 999px;
       font-size: 0.85rem;
     }
 
     .hero h1 {
-      margin: 10px 0 10px;
+      margin: 8px 0;
       font-size: clamp(1.7rem, 3vw, 2.4rem);
-      max-width: 720px;
-    }
-
-    .hero p {
-      margin: 0;
       max-width: 760px;
-      color: #d6f2e0;
     }
 
-    main {
-      margin-top: -45px;
-      padding-bottom: 40px;
-    }
+    .hero p { margin: 0; max-width: 780px; color: #ddf5e6; }
+
+    main { margin-top: -44px; padding-bottom: 34px; }
 
     .grid {
       display: grid;
@@ -92,14 +75,9 @@
       padding: 18px;
     }
 
-    .card h2 {
-      margin: 0 0 8px;
-      font-size: 1.15rem;
-      color: var(--green-800);
-    }
-
+    .card h2 { margin: 0 0 8px; color: var(--green-700); font-size: 1.1rem; }
     .card p { margin: 0 0 12px; color: var(--muted); }
-    .hint { font-size: 0.88rem; color: var(--muted); }
+    .hint { color: var(--muted); font-size: 0.88rem; margin-top: 8px; }
 
     .chat-box {
       height: 220px;
@@ -107,35 +85,33 @@
       border: 1px solid #e4e7ec;
       border-radius: 10px;
       padding: 12px;
-      background: #fcfdfc;
       margin-bottom: 10px;
+      background: #fcfdfc;
     }
 
     .msg {
       margin: 6px 0;
       padding: 8px 10px;
       border-radius: 10px;
-      max-width: 88%;
+      max-width: 90%;
       font-size: 0.95rem;
+      word-break: break-word;
     }
 
     .bot { background: var(--green-100); }
     .user { background: var(--sky-100); margin-left: auto; }
 
-    .row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; }
 
-    input, select, button {
+    input, select, button, textarea {
       font: inherit;
       border-radius: 10px;
       border: 1px solid #d0d5dd;
       padding: 10px 12px;
     }
 
-    input, select { flex: 1; min-width: 170px; }
+    input, select, textarea { flex: 1; min-width: 170px; }
+    textarea { min-height: 78px; resize: vertical; }
 
     button {
       border: none;
@@ -145,11 +121,11 @@
       padding-inline: 16px;
     }
 
-    button:hover { background: var(--green-800); }
+    button:hover { opacity: 0.95; }
 
     #preview {
       width: 100%;
-      max-height: 220px;
+      max-height: 230px;
       object-fit: cover;
       border-radius: 10px;
       border: 1px solid #e4e7ec;
@@ -159,25 +135,26 @@
 
     .weather {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
       gap: 8px;
       margin-top: 10px;
     }
 
     .stat {
-      background: #f9fafb;
       border: 1px solid #e4e7ec;
       border-radius: 10px;
+      background: #f9fafb;
       padding: 10px;
     }
 
-    .stat strong { display: block; color: var(--green-800); font-size: 1rem; }
+    .stat strong { color: var(--green-700); display: block; }
+
     iframe {
       width: 100%;
       min-height: 260px;
       border: 0;
       border-radius: 12px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     footer {
@@ -193,12 +170,12 @@
     <div class="container">
       <nav>
         <div class="logo">🌱 AgroCloud Pro</div>
-        <span class="tag">Simple • Smart • Farmer Friendly</span>
+        <span class="tag">Professional UI • Farmer Friendly</span>
       </nav>
       <section class="hero">
-        <h1>Professional Agro Cloud Platform for Easy Farming Decisions</h1>
+        <h1>Smart Agro Cloud Platform with Real API Data</h1>
         <p>
-          Get irrigation advice from AI chat, detect crop issues using image/camera, and see location-based weather on map — all in one simple dashboard.
+          Easy to understand for farmers: ask irrigation questions, upload crop image for live API detection, and get weather from selected location on map.
         </p>
       </section>
     </div>
@@ -207,74 +184,82 @@
   <main class="container">
     <section class="grid">
       <article class="card">
-        <h2>💧 Irrigation Chat AI</h2>
-        <p>Ask in simple words. AI gives practical water advice for your crop.</p>
+        <h2>💧 Irrigation Assistant (Live API)</h2>
+        <p>Type your question in simple language. Response is fetched from live web API data.</p>
         <div class="chat-box" id="chatBox">
-          <div class="msg bot">Namaste! Ask: “How much water for wheat today?”</div>
+          <div class="msg bot">Namaste! Ask your irrigation question and press Send.</div>
         </div>
         <div class="row">
-          <input id="chatInput" type="text" placeholder="Type your farming question..." />
+          <input id="chatInput" type="text" placeholder="Example: Best irrigation for wheat in summer" />
           <button id="sendBtn">Send</button>
         </div>
+        <p class="hint">Source: DuckDuckGo Instant Answer API.</p>
       </article>
 
       <article class="card">
-        <h2>📷 Crop Detection (Image / Camera)</h2>
-        <p>Upload crop photo or click from camera for quick health feedback.</p>
+        <h2>📷 Crop Detection (Your API Endpoint)</h2>
+        <p>Upload or capture image, then detect via your crop-detection API (no mock output).</p>
         <div class="row">
           <input id="imageInput" type="file" accept="image/*" capture="environment" />
-          <button id="analyzeBtn">Analyze</button>
         </div>
         <img id="preview" alt="Crop preview" />
-        <p class="hint" id="detectionResult">No image selected yet.</p>
+        <div class="row" style="margin-top:10px;">
+          <input id="detectApiUrl" type="url" placeholder="Detection API URL (POST)" />
+          <input id="detectApiKey" type="text" placeholder="API Key (optional)" />
+        </div>
+        <div class="row" style="margin-top:8px;">
+          <button id="analyzeBtn">Analyze from API</button>
+        </div>
+        <textarea id="detectionResult" readonly placeholder="API result will appear here..."></textarea>
       </article>
     </section>
 
     <section class="card">
-      <h2>🗺️ Map + Accurate Weather by Selected Location</h2>
-      <p>Select your area to get live weather guidance for better farm planning.</p>
+      <h2>🗺️ Map + Weather (Live APIs)</h2>
+      <p>Search your village/city, select location from API results, then get current weather.</p>
       <div class="row">
-        <select id="locationSelect">
-          <option value="28.6139,77.2090">Delhi, India</option>
-          <option value="26.8467,80.9462">Lucknow, India</option>
-          <option value="23.0225,72.5714">Ahmedabad, India</option>
-          <option value="18.5204,73.8567">Pune, India</option>
-          <option value="13.0827,80.2707">Chennai, India</option>
-        </select>
+        <input id="locationQuery" type="text" placeholder="Search location (e.g., Bhopal, India)" />
+        <button id="searchLocationBtn">Search Location</button>
+      </div>
+      <div class="row" style="margin-top:8px;">
+        <select id="locationSelect"></select>
         <button id="weatherBtn">Get Weather</button>
       </div>
 
-      <div class="weather" id="weatherPanel">
+      <div class="weather">
         <div class="stat"><small>Temperature</small><strong id="temp">--</strong></div>
         <div class="stat"><small>Wind</small><strong id="wind">--</strong></div>
         <div class="stat"><small>Rain</small><strong id="rain">--</strong></div>
         <div class="stat"><small>Time</small><strong id="time">--</strong></div>
       </div>
 
-      <iframe
-        id="mapFrame"
-        title="Selected location map"
-        src="https://www.openstreetmap.org/export/embed.html?bbox=77.1090,28.5139,77.3090,28.7139&layer=mapnik&marker=28.6139,77.2090">
-      </iframe>
-      <p class="hint" id="weatherNote">Tap “Get Weather” to refresh details.</p>
+      <iframe id="mapFrame" title="Selected location map"></iframe>
+      <p class="hint" id="weatherNote">Search a location first.</p>
     </section>
   </main>
 
   <footer>
-    AgroCloud Pro • Designed for clear understanding by every farmer.
+    AgroCloud Pro • Clean professional design with real API-powered data.
   </footer>
 
   <script>
     const chatBox = document.getElementById("chatBox");
     const chatInput = document.getElementById("chatInput");
     const sendBtn = document.getElementById("sendBtn");
+
     const imageInput = document.getElementById("imageInput");
     const preview = document.getElementById("preview");
+    const detectApiUrl = document.getElementById("detectApiUrl");
+    const detectApiKey = document.getElementById("detectApiKey");
     const analyzeBtn = document.getElementById("analyzeBtn");
     const detectionResult = document.getElementById("detectionResult");
+
+    const locationQuery = document.getElementById("locationQuery");
+    const searchLocationBtn = document.getElementById("searchLocationBtn");
     const locationSelect = document.getElementById("locationSelect");
     const weatherBtn = document.getElementById("weatherBtn");
     const mapFrame = document.getElementById("mapFrame");
+    const weatherNote = document.getElementById("weatherNote");
 
     function addMessage(text, type) {
       const div = document.createElement("div");
@@ -284,21 +269,34 @@
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function irrigationResponse(question) {
-      const q = question.toLowerCase();
-      if (q.includes("wheat")) return "For wheat: keep soil moist, avoid waterlogging, irrigate early morning.";
-      if (q.includes("rice")) return "For rice: maintain standing water in early growth; reduce near harvest.";
-      if (q.includes("cotton")) return "For cotton: deep irrigation at longer intervals works better.";
-      if (q.includes("today") || q.includes("rain")) return "Check weather panel below. If rain chance is high, reduce irrigation.";
-      return "Irrigate based on soil moisture: dry top soil means water needed; wet soil means wait.";
+    async function getIrrigationAnswer(question) {
+      const q = encodeURIComponent(question + " irrigation farming");
+      const url = `https://api.duckduckgo.com/?q=${q}&format=json&no_redirect=1&no_html=1&skip_disambig=1`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Irrigation API request failed");
+      const data = await res.json();
+
+      if (data.AbstractText) return data.AbstractText;
+      if (data.Answer) return data.Answer;
+      if (Array.isArray(data.RelatedTopics) && data.RelatedTopics.length) {
+        const first = data.RelatedTopics.find(item => item.Text) || data.RelatedTopics[0];
+        if (first && first.Text) return first.Text;
+      }
+      return "No answer found from API for this query. Please ask with crop name and condition.";
     }
 
-    function sendChat() {
+    async function sendChat() {
       const text = chatInput.value.trim();
       if (!text) return;
       addMessage(text, "user");
-      setTimeout(() => addMessage(irrigationResponse(text), "bot"), 250);
       chatInput.value = "";
+      addMessage("Fetching live API answer...", "bot");
+      try {
+        const answer = await getIrrigationAnswer(text);
+        chatBox.lastChild.textContent = answer;
+      } catch (error) {
+        chatBox.lastChild.textContent = "Unable to fetch irrigation API data right now.";
+      }
     }
 
     sendBtn.addEventListener("click", sendChat);
@@ -315,51 +313,130 @@
         preview.style.display = "block";
       };
       reader.readAsDataURL(file);
-      detectionResult.textContent = "Image selected. Click Analyze for quick feedback.";
     });
 
-    analyzeBtn.addEventListener("click", () => {
-      if (!imageInput.files[0]) {
-        detectionResult.textContent = "Please upload or capture a crop image first.";
+    async function fileToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    analyzeBtn.addEventListener("click", async () => {
+      const file = imageInput.files[0];
+      const apiUrl = detectApiUrl.value.trim();
+      const apiKey = detectApiKey.value.trim();
+
+      if (!file) {
+        detectionResult.value = "Please select crop image first.";
         return;
       }
-      const samples = [
-        "Possible early leaf spot signs. Spray guidance: consult local agronomist.",
-        "Crop looks mostly healthy. Continue regular irrigation and nutrient plan.",
-        "Mild yellowing detected. Check nitrogen and water stress level."
-      ];
-      const pick = samples[Math.floor(Math.random() * samples.length)];
-      detectionResult.textContent = "AI Detection: " + pick;
+      if (!apiUrl) {
+        detectionResult.value = "Please enter a crop detection API URL.";
+        return;
+      }
+
+      detectionResult.value = "Calling detection API...";
+      try {
+        const imageData = await fileToDataUrl(file);
+        const headers = { "Content-Type": "application/json" };
+        if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
+
+        const res = await fetch(apiUrl, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ image: imageData })
+        });
+
+        const text = await res.text();
+        detectionResult.value = text;
+      } catch (error) {
+        detectionResult.value = "Detection API request failed.";
+      }
     });
 
-    async function updateWeather() {
-      const [lat, lon] = locationSelect.value.split(",");
+    function setMap(lat, lon) {
       const minLat = (parseFloat(lat) - 0.1).toFixed(4);
       const maxLat = (parseFloat(lat) + 0.1).toFixed(4);
       const minLon = (parseFloat(lon) - 0.1).toFixed(4);
       const maxLon = (parseFloat(lon) + 0.1).toFixed(4);
-
       mapFrame.src = `https://www.openstreetmap.org/export/embed.html?bbox=${minLon},${minLat},${maxLon},${maxLat}&layer=mapnik&marker=${lat},${lon}`;
+    }
 
-      document.getElementById("weatherNote").textContent = "Loading weather...";
+    async function searchLocations() {
+      const query = locationQuery.value.trim();
+      if (!query) {
+        weatherNote.textContent = "Enter a location to search.";
+        return;
+      }
+
+      weatherNote.textContent = "Searching location API...";
+      locationSelect.innerHTML = "";
+
+      try {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+        const res = await fetch(url, { headers: { "Accept": "application/json" } });
+        if (!res.ok) throw new Error("Location API failed");
+        const data = await res.json();
+
+        if (!Array.isArray(data) || data.length === 0) {
+          weatherNote.textContent = "No location found from API.";
+          return;
+        }
+
+        data.forEach((item) => {
+          const option = document.createElement("option");
+          option.value = `${item.lat},${item.lon}`;
+          option.textContent = item.display_name;
+          locationSelect.appendChild(option);
+        });
+
+        const [lat, lon] = locationSelect.value.split(",");
+        setMap(lat, lon);
+        weatherNote.textContent = "Location selected from API. Click Get Weather.";
+      } catch (error) {
+        weatherNote.textContent = "Unable to fetch location API data.";
+      }
+    }
+
+    async function updateWeather() {
+      const selected = locationSelect.value;
+      if (!selected) {
+        weatherNote.textContent = "Please search and select location first.";
+        return;
+      }
+
+      const [lat, lon] = selected.split(",");
+      setMap(lat, lon);
+      weatherNote.textContent = "Fetching weather API...";
+
       try {
         const api = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,rain`;
         const res = await fetch(api);
+        if (!res.ok) throw new Error("Weather API failed");
         const data = await res.json();
         const c = data.current || {};
 
         document.getElementById("temp").textContent = (c.temperature_2m ?? "--") + "°C";
         document.getElementById("wind").textContent = (c.wind_speed_10m ?? "--") + " km/h";
-        document.getElementById("rain").textContent = (c.rain ?? 0) + " mm";
+        document.getElementById("rain").textContent = (c.rain ?? "--") + " mm";
         document.getElementById("time").textContent = c.time ? c.time.replace("T", " ") : "--";
-        document.getElementById("weatherNote").textContent = "Weather updated for selected location.";
-      } catch (e) {
-        document.getElementById("weatherNote").textContent = "Weather service unavailable. Please try again.";
+        weatherNote.textContent = "Live weather updated from API.";
+      } catch (error) {
+        weatherNote.textContent = "Unable to fetch weather API data.";
       }
     }
 
+    searchLocationBtn.addEventListener("click", searchLocations);
+    locationSelect.addEventListener("change", () => {
+      const selected = locationSelect.value;
+      if (!selected) return;
+      const [lat, lon] = selected.split(",");
+      setMap(lat, lon);
+    });
     weatherBtn.addEventListener("click", updateWeather);
-    updateWeather();
   </script>
 </body>
 </html>

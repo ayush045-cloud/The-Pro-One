@@ -20,6 +20,8 @@
       --radius: 16px;
       --radius-sm: 12px;
       --shadow: 0 14px 40px rgba(18, 32, 22, 0.09);
+      --focus-ring: rgba(46, 168, 106, 0.32);
+      --button-shadow: rgba(32, 123, 74, 0.24);
     }
 
     * { box-sizing: border-box; }
@@ -152,7 +154,7 @@
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--green-500);
-      box-shadow: 0 0 0 3px rgba(46, 168, 106, 0.32);
+      box-shadow: 0 0 0 3px var(--focus-ring);
     }
 
     input, select, textarea { flex: 1; min-width: 180px; }
@@ -169,7 +171,7 @@
       transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
     }
 
-    button:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(32, 123, 74, 0.24); }
+    button:hover { transform: translateY(-1px); box-shadow: 0 8px 18px var(--button-shadow); }
     button:active { transform: translateY(0); box-shadow: none; }
 
     #preview {
@@ -228,7 +230,7 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation: none !important;
-        transition-duration: 0.01ms !important;
+        transition-duration: 0ms !important;
         scroll-behavior: auto !important;
       }
     }

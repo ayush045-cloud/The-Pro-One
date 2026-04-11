@@ -56,7 +56,7 @@
       background: #94a3b8;
     }
     
-    .fade-in { animation: fadeIn 0.3s ease-in-out; }
+    .fade-in { animation: fadeIn 0.3s ease-in-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
     .hero-float {
@@ -208,7 +208,7 @@
               </div>
               <div>
                 <h2 class="font-bold text-slate-800 text-base sm:text-lg">Agro AI Assistant</h2>
-                <p class="text-[11px] sm:text-xs text-slate-500 font-medium">Powered by Gemini & Plant.id</p>
+                <p class="text-[11px] sm:text-xs text-slate-500 font-medium">Powered by Gemini AI</p>
               </div>
             </div>
           </div>
@@ -489,6 +489,11 @@
     // The environment will inject the Gemini API key here
     const apiKey = ""; 
 
+    // Mobile Navigation Switcher
+    function switchTab(tabId) {
+      document.body.setAttribute('data-active-tab', tabId);
+    }
+
     // Custom Toast Notification System (replaces alert)
     function showToast(message, type = 'info') {
       const toast = document.createElement('div');
@@ -547,6 +552,7 @@
     let currentLon = null;
 
     // Dynamic Form Builder for Fields - FIXED TO PREVENT DATA LOSS WHILE TYPING
+    // Dynamic Form Builder for Fields
     function renderProfileFieldInputs() {
       const num = parseInt(profNumFields?.value) || 1;
       
@@ -742,7 +748,7 @@
     function addMessage(htmlContent, type, isHtml = false, msgId = null) {
       const wrapper = document.createElement("div");
       if (msgId) wrapper.id = msgId;
-      wrapper.className = `flex items-start gap-2 max-w-[90%] sm:max-w-[80%] fade-in ${type === 'user' ? 'self-end flex-row-reverse' : ''}`;
+      wrapper.className = `flex items-start gap-2 max-w-[95%] sm:max-w-[80%] fade-in ${type === 'user' ? 'self-end flex-row-reverse' : ''}`;
       
       const bubble = document.createElement("div");
       bubble.className = type === 'bot' 
@@ -856,10 +862,10 @@
       });
     }
 
-    // --- API LOGIC (GEMINI & PLANT.ID) ---
-    async function askGemini(userText, contextStr = "") {
+    // --- API LOGIC (GEMINI) ---
+    async function askGemini(userText, contextStr = "", imageDataUrl = null) {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-      const systemInstruction = `You are AgroCloud AI, an expert, friendly agricultural assistant for Indian farmers. Keep answers practical, easy to read, and use short bullet points. Avoid overwhelming long paragraphs.`;
+      const systemInstruction = `You are AgroCloud AI, an expert, friendly agricultural assistant for Indian farmers. Keep answers practical, easy to read, and use short bullet points. Avoid overwhelming long paragraphs. If a user uploads an image, first explicitly state the identified plant and diagnose any diseases or pests before providing treatment advice. ALWAYS reply in the exact same language the user writes in.`;
       
       let contents = chatHistory.map(msg => ({ role: msg.role, parts: [{ text: msg.text }] }));
       
@@ -870,7 +876,19 @@
         promptToSend = `[SYSTEM CONTEXT (Hidden):\n${sysContext}]\n\nUser Message: ${userText || "What should I do about this?"}`;
       }
       
-      contents.push({ role: "user", parts: [{ text: promptToSend }] });
+      let userParts = [{ text: promptToSend }];
+      if (imageDataUrl) {
+        const mimeType = imageDataUrl.substring(imageDataUrl.indexOf(":") + 1, imageDataUrl.indexOf(";"));
+        const base64Data = imageDataUrl.substring(imageDataUrl.indexOf(",") + 1);
+        userParts.push({
+          inlineData: {
+            mimeType: mimeType,
+            data: base64Data
+          }
+        });
+      }
+
+      contents.push({ role: "user", parts: userParts });
 
       try {
         const data = await fetchWithBackoff(url, {
@@ -890,46 +908,6 @@
       }
     }
 
-    async function processCropImage(file) {
-      const apiUrl = "https://plant.id/api/v3/health_assessment";
-      const plantApiKey = "fsYXwOUhKHGWV32KP9IhJn7EXsoFVoK7JfrKB8rkDhqeevA10Y";
-      const dataUrl = await compressImageToDataUrl(file);
-      const base64Image = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
-
-      // Note: Plant.id requires its own fetch logic since it's a separate API endpoint
-      const res = await fetch(apiUrl, {
-        method: "POST", headers: { "Content-Type": "application/json", "Api-Key": plantApiKey },
-        body: JSON.stringify({ images: [base64Image] })
-      });
-      const payload = await res.json();
-      if (!res.ok) throw new Error(payload?.error?.message || "Image scan failed.");
-
-      const resultObj = payload.result;
-      if (resultObj?.is_plant?.binary === false) {
-        return { html: `<p class="text-orange-600">Not a plant. Please upload a clear leaf photo.</p>`, diagnosticContext: "No plant detected." };
-      }
-
-      let plantName = resultObj?.classification?.suggestions?.[0]?.name || "Unknown Plant";
-      let isHealthy = resultObj?.is_healthy?.binary ?? true;
-      let diseaseText = "";
-
-      if (resultObj?.disease?.suggestions?.[0]?.probability > 0.15) {
-         isHealthy = false;
-         diseaseText = resultObj.disease.suggestions[0].name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-      }
-
-      let html = `<div class="flex flex-col w-full border border-slate-200 rounded-xl p-3 bg-white mb-3 shadow-sm">
-        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] uppercase font-bold mb-2 w-max ${isHealthy ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-          ${isHealthy ? 'Appears Healthy' : 'Disease Detected'}
-        </div>
-        <h3 class="text-sm font-bold text-slate-800">Detected: ${plantName}</h3>
-        ${!isHealthy ? `<span class="block text-xs font-semibold text-red-600 mt-1">Diagnosis: ${diseaseText}</span>` : ''}
-      </div>`;
-
-      const diagnosticContext = `Plant detected: ${plantName}. Status: ${isHealthy ? 'Healthy' : 'Diseased'}. ${diseaseText ? `Disease: ${diseaseText}.` : ''} Formulate practical advice based on this for an Indian farmer.`;
-      return { html, diagnosticContext };
-    }
-
     async function handleSend() {
       const text = chatInput?.value?.trim() || '';
       const file = currentSelectedFile;
@@ -937,7 +915,13 @@
 
       if (sendBtn) sendBtn.disabled = true;
       let userHtml = `<div class="flex flex-col gap-2">`;
-      if (file && chatImagePreview) userHtml += `<img src="${chatImagePreview.src}" class="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded-xl border border-white/20 shadow-sm" />`;
+      let imageDataUrl = null;
+
+      if (file) {
+         imageDataUrl = await compressImageToDataUrl(file);
+      }
+
+      if (imageDataUrl && chatImagePreview) userHtml += `<img src="${chatImagePreview.src}" class="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded-xl border border-white/20 shadow-sm" />`;
       if (text) userHtml += `<p>${text}</p>`;
       userHtml += `</div>`;
       addMessage(userHtml, "user", true);
@@ -947,20 +931,12 @@
 
       const loadingId = 'msg-' + Date.now();
       addMessage(`<div class="flex items-center gap-2 text-slate-500 font-medium">
-        <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-brand-500"></i> Thinking...
+        <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-brand-500"></i> Analyzing with Gemini Vision...
       </div>`, "bot", true, loadingId);
 
       try {
-        let finalBotHtml = "";
-        let aiContext = "";
-        if (file) {
-          const cropData = await processCropImage(file);
-          finalBotHtml += cropData.html;
-          aiContext = cropData.diagnosticContext;
-        }
-        if (text || aiContext) {
-           finalBotHtml += await askGemini(text || "Give me advice based on the image scan.", aiContext);
-        }
+        const defaultText = file ? "Please analyze this plant image. What crop is it, does it have any diseases, and how should I treat it?" : "";
+        const finalBotHtml = await askGemini(text || defaultText, "", imageDataUrl);
         updateMessage(loadingId, finalBotHtml);
       } catch (error) {
         updateMessage(loadingId, `<p class="text-red-600 text-sm">Processing Error: ${error.message}</p>`);
@@ -1273,24 +1249,23 @@
         const prompt = `Farmer context:\n${getFarmerContext()}\nSoil: ${soil}\nSeason: ${season}\nRecommend the TOP 4 best crops. Return strictly a JSON array like: [{"name":"Crop","emoji":"🌾","why":"Reason"}]`;
 
         try {
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+          const data = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [{ parts: [{ text: prompt }] }],
               generationConfig: { responseMimeType: "application/json" }
             })
           });
-          const data = await res.json();
           const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
           const crops = JSON.parse(raw);
           
           const grid = document.getElementById("advGrid");
           if (grid) {
             grid.innerHTML = crops.slice(0,4).map(c => `
-              <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-2 text-center flex flex-col">
-                <span class="text-xl mb-1">${c.emoji || '🌱'}</span>
+              <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-3 text-center flex flex-col justify-center">
+                <span class="text-2xl mb-1">${c.emoji || '🌱'}</span>
                 <span class="font-bold text-slate-800 text-[11px]">${c.name}</span>
-                <span class="text-[9px] text-slate-500 leading-tight mt-1">${c.why}</span>
+                <span class="text-[9px] text-slate-600 leading-tight mt-1 line-clamp-2">${c.why}</span>
               </div>
             `).join('');
           }
@@ -1300,7 +1275,7 @@
             advResults.classList.add("flex");
           }
         } catch (err) {
-          showToast("Advisor error. Please try again.", "error");
+          showToast("Advisor error. Please try again later.", "error");
         } finally {
           advBtn.innerHTML = origHtml;
           advBtn.disabled = false;

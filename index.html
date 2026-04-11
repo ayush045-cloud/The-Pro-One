@@ -272,11 +272,13 @@
                 <i data-lucide="crosshair" class="w-4 h-4"></i>
               </button>
             </div>
+            
             <div class="flex gap-2 mb-4">
-              <select id="locationSelect" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-xs appearance-none text-slate-700 truncate">
-                <option value="">Select from results...</option>
-              </select>
-              <button id="weatherBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-all shrink-0">
+              <div class="relative flex items-center flex-grow">
+                <span class="absolute left-3 text-sm pointer-events-none">📍</span>
+                <input id="locationSelect" type="text" readonly placeholder="Search for a location..." class="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none text-sm text-slate-700 truncate cursor-default shadow-sm" />
+              </div>
+              <button id="weatherBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shrink-0 shadow-sm">
                 Update
               </button>
             </div>
@@ -915,15 +917,16 @@
       }
 
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=3`);
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`);
         const data = await res.json();
         if (!data.length) throw new Error();
         
-        if (locationSelect) locationSelect.innerHTML = data.map(i => `<option value="${i.lat},${i.lon}">${i.display_name}</option>`).join('');
+        if (locationSelect) locationSelect.value = data[0].display_name.split(',')[0];
         setMap(data[0].lat, data[0].lon);
         if (weatherNote) weatherNote.textContent = "Found! Click 'Update'.";
       } catch (error) {
         if (weatherNote) weatherNote.textContent = "Location search error.";
+        showToast("Location not found.", "error");
       } finally {
         if (searchLocationBtn) {
           searchLocationBtn.innerHTML = "Search";
@@ -933,10 +936,13 @@
     }
 
     async function updateWeather() {
-      const val = locationSelect?.value;
-      if (!val) return;
-      const [lat, lon] = val.split(",");
-      setMap(parseFloat(lat), parseFloat(lon));
+      if (currentLat === null || currentLon === null) {
+        showToast("Please search for a location or use GPS first.", "error");
+        return;
+      }
+      const lat = currentLat;
+      const lon = currentLon;
+      setMap(lat, lon); // refresh map to be safe
       
       if (weatherBtn) {
         weatherBtn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>`;
@@ -973,7 +979,6 @@
 
     if (searchLocationBtn) searchLocationBtn.addEventListener("click", searchLocations);
     if (locationQuery) locationQuery.addEventListener("keydown", (e) => { if (e.key === "Enter") searchLocations(); });
-    if (locationSelect) locationSelect.addEventListener("change", () => { if (locationSelect.value) setMap(...locationSelect.value.split(",")); });
     if (weatherBtn) weatherBtn.addEventListener("click", updateWeather);
 
     if (gpsBtn) {
@@ -983,7 +988,7 @@
         navigator.geolocation.getCurrentPosition(async (pos) => {
           const lat = pos.coords.latitude, lon = pos.coords.longitude;
           setMap(lat, lon);
-          if (locationSelect) locationSelect.innerHTML = `<option value="${lat},${lon}">📍 GPS Location</option>`;
+          if (locationSelect) locationSelect.value = `GPS Location`;
           updateWeather();
           gpsBtn.innerHTML = `<i data-lucide="crosshair" class="w-4 h-4"></i>`;
           lucide.createIcons();

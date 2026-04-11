@@ -113,9 +113,40 @@
     .chat-markdown ul { margin-top: 4px; margin-bottom: 4px; padding-left: 16px; list-style-type: disc; }
     .chat-markdown p { margin-bottom: 6px; }
     .chat-markdown p:last-child { margin-bottom: 0; }
+    
+    /* Mobile Navigation Logic */
+    @media (max-width: 1023px) {
+      .tab-content { display: none !important; }
+      
+      body[data-active-tab="chat"] #section-chat,
+      body[data-active-tab="profile"] #section-profile,
+      body[data-active-tab="weather"] #section-weather,
+      body[data-active-tab="irrigation"] #section-irrigation,
+      body[data-active-tab="advisor"] #section-advisor { 
+        display: flex !important; 
+        flex: 1 1 0% !important;
+        min-height: 0 !important;
+      }
+
+      .tools-column { display: none !important; }
+      body:not([data-active-tab="chat"]) .tools-column { 
+        display: flex !important; 
+        flex: 1 1 0% !important;
+        min-height: 0 !important;
+      }
+
+      .nav-btn { color: #64748b; }
+      body[data-active-tab="chat"] #nav-btn-chat,
+      body[data-active-tab="profile"] #nav-btn-profile,
+      body[data-active-tab="weather"] #nav-btn-weather,
+      body[data-active-tab="irrigation"] #nav-btn-irrigation,
+      body[data-active-tab="advisor"] #nav-btn-advisor {
+        color: #059669; /* brand-600 */
+      }
+    }
   </style>
 </head>
-<body class="bg-gradient-to-b from-slate-50 via-emerald-50/40 to-slate-100 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+<body data-active-tab="chat" class="bg-gradient-to-b from-slate-50 via-emerald-50/40 to-slate-100 text-slate-800 font-sans antialiased h-[100dvh] flex flex-col overflow-hidden selection:bg-brand-500 selection:text-white">
 
   <div class="ambient" aria-hidden="true">
     <div class="ambient-orb one"></div>
@@ -124,7 +155,7 @@
   </div>
 
   <!-- Header -->
-  <header class="bg-gradient-to-br from-brand-950 via-brand-900 to-brand-700 text-white pt-6 pb-20 px-4 sm:px-6 lg:px-8 shadow-lg relative overflow-hidden z-10">
+  <header class="bg-gradient-to-br from-brand-950 via-brand-900 to-brand-700 text-white pt-6 pb-20 px-4 sm:px-6 lg:px-8 shadow-lg relative overflow-hidden z-10 shrink-0">
     <div class="absolute inset-0 overflow-hidden z-0 opacity-10 pointer-events-none">
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="absolute w-full h-full">
         <path d="M0,100 C30,50 70,50 100,0 L100,100 Z" fill="currentColor"></path>
@@ -138,44 +169,40 @@
           AgroCloud Pro
         </div>
         <span class="bg-white/10 border border-white/20 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide shadow-sm">
-          Conversational AI Dashboard
+          let's work together
         </span>
       </nav>
       
       <div class="max-w-2xl hero-float">
-        <div class="mb-4 inline-flex items-center gap-2 bg-white/10 border border-white/20 px-3 py-1.5 rounded-full backdrop-blur-sm text-xs font-semibold">
-          <span class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
-          Live farm intelligence
-        </div>
-        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-3 text-white">
-          Smart Agro AI, now with a sharper vibe
-        </h1>
-        <p class="text-brand-50 text-sm sm:text-base lg:text-lg opacity-90 leading-relaxed max-w-xl">
-          Your conversational farming assistant. Chat naturally, ask for advice, upload crop images, and manage your farm tools all in one place.
-        </p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a href="#chatBox" class="inline-flex items-center gap-2 bg-white text-brand-800 hover:bg-brand-50 px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm">
-            <i data-lucide="sparkles" class="w-4 h-4"></i>
-            Start chatting
-          </a>
-          <span class="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-xl text-sm font-medium">
-            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-300"></i>
-            Trusted AI workflows
           </span>
+          <!-- Clean Language Selector Box -->
+          <div class="bg-white/10 p-1 pr-1.5 rounded-xl backdrop-blur-md border border-white/20 flex items-center gap-1.5 shadow-sm">
+            <div class="bg-white/20 p-1 rounded-md hidden sm:block"><i data-lucide="languages" class="w-3.5 h-3.5 text-white"></i></div>
+            <div id="google_translate_element" class="scale-95 origin-right sm:origin-left overflow-hidden"></div>
+          </div>
         </div>
+      </nav>
+      
+      <div class="max-w-2xl hero-float hidden lg:block mt-6">
+        <h1 class="text-3xl lg:text-5xl font-bold leading-tight mb-3 text-white">
+          Smart Agro AI, everywhere you go.
+        </h1>
+        <p class="text-brand-50 text-base lg:text-lg opacity-90 leading-relaxed max-w-xl">
+          Your conversational farming assistant. Chat naturally, upload crop images, and manage your farm tools all in one place.
+        </p>
       </div>
     </div>
   </header>
 
   <!-- Main Content Layout -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 w-full flex-grow pb-12 z-20 relative">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 lg:-mt-12 w-full flex-1 min-h-0 flex flex-col overflow-hidden z-20 relative">
+    <div class="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-8 flex-1 min-h-0">
 
       <!-- Column 1: Unified AI Chat (8/12 on large screens) -->
-      <div class="lg:col-span-8 flex flex-col h-[600px] sm:h-[750px]">
+      <div id="section-chat" class="tab-content lg:col-span-8 flex flex-col flex-1 min-h-0 overflow-hidden">
         <article class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col transition-shadow hover:shadow-md h-full">
           <!-- Chat Header -->
-          <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between">
+          <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-3">
               <div class="bg-brand-100 p-2.5 rounded-xl text-brand-600 shadow-sm relative">
                 <i data-lucide="bot" class="w-5 h-5"></i>
@@ -189,7 +216,7 @@
           </div>
           
           <!-- Chat Messages Area -->
-          <div class="flex-grow p-4 sm:p-5 overflow-y-auto scrollbar-hide flex flex-col gap-4 bg-white" id="chatBox">
+          <div class="flex-1 min-h-0 p-4 sm:p-5 overflow-y-auto scrollbar-hide flex flex-col gap-4 bg-white" id="chatBox">
             <!-- Welcome Message -->
             <div class="flex items-start gap-2 max-w-[90%] sm:max-w-[80%] fade-in">
               <div class="bg-slate-50 text-slate-800 p-4 rounded-2xl rounded-tl-sm text-sm shadow-sm border border-slate-200 leading-relaxed">
@@ -205,7 +232,7 @@
           </div>
           
           <!-- Chat Input Area -->
-          <div class="p-3 sm:p-4 bg-slate-50 border-t border-slate-200">
+          <div class="p-3 sm:p-4 bg-slate-50 border-t border-slate-200 shrink-0">
             <!-- Image Preview Wrapper -->
             <div id="imagePreviewContainer" class="hidden relative mb-3 w-24 h-24 fade-in">
               <img id="chatImagePreview" class="w-full h-full object-cover rounded-xl border border-slate-300 shadow-sm" />
@@ -222,7 +249,7 @@
               </button>
               
               <!-- Text Input -->
-              <input id="chatInput" type="text" placeholder="Message your AI assistant or upload a crop photo..." class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all text-sm shadow-inner" />
+              <input id="chatInput" type="text" placeholder="Ask AI or upload a crop photo..." class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all text-sm shadow-inner" />
               
               <!-- Send Button -->
               <button id="sendBtn" class="p-3.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl transition-all shadow-sm shrink-0 active:scale-95 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
@@ -234,33 +261,37 @@
       </div>
 
       <!-- Column 2: Tools Stack (4/12 on large screens) - Scrollable to fit all old features -->
-      <div class="lg:col-span-4 flex flex-col gap-6 overflow-y-auto scrollbar-hide h-[600px] sm:h-[750px] pb-4">
+      <div class="tools-column lg:col-span-4 flex flex-col gap-6 overflow-y-auto scrollbar-hide flex-1 min-h-0 pb-4 lg:pb-0">
         
         <!-- 1. Profile Summary Card -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col shrink-0">
-          <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between">
+        <section id="section-profile" class="tab-content bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col shrink-0">
+          <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-2">
               <i data-lucide="user" class="w-4 h-4 text-brand-600"></i>
               <h2 class="font-bold text-slate-800 text-sm">Farm Profile</h2>
             </div>
-            <button id="editProfileBtn" class="text-xs text-brand-600 font-semibold hover:underline">Edit</button>
+            <button id="editProfileBtn" class="text-xs text-brand-600 font-semibold hover:underline">Edit Setup</button>
           </div>
-          <div class="p-4 flex flex-col gap-2 text-sm">
-            <div class="flex justify-between"><span class="text-slate-500">Name:</span> <strong id="dispProfileName" class="text-slate-800">--</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Village:</span> <strong id="dispProfileVillage" class="text-slate-800">--</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Crops:</span> <strong id="dispProfileCrops" class="text-slate-800 truncate max-w-[150px]">--</strong></div>
-            <div class="flex justify-between"><span class="text-slate-500">Land:</span> <strong id="dispProfileLand" class="text-slate-800">--</strong></div>
+          <div class="p-4 flex flex-col gap-3 text-sm flex-1 min-h-0 lg:flex-none overflow-y-auto">
+            <div class="flex justify-between items-center"><span class="text-slate-500 text-xs">Farmer Name</span> <strong id="dispProfileName" class="text-slate-800">--</strong></div>
+            <div class="flex justify-between items-center"><span class="text-slate-500 text-xs">Village / Location</span> <strong id="dispProfileVillage" class="text-slate-800">--</strong></div>
+            <div class="flex justify-between items-center"><span class="text-slate-500 text-xs">Active Crops</span> <strong id="dispProfileCrops" class="text-slate-800 truncate max-w-[150px]">--</strong></div>
+            <div class="flex justify-between items-center"><span class="text-slate-500 text-xs">Total Land</span> <strong id="dispProfileLand" class="text-slate-800">--</strong></div>
+            
+            <button id="mobileEditProfileBtn" class="mt-2 w-full lg:hidden bg-brand-50 hover:bg-brand-100 text-brand-700 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 border border-brand-200 shrink-0">
+              <i data-lucide="settings" class="w-3.5 h-3.5"></i> Update Profile
+            </button>
           </div>
         </section>
 
         <!-- 2. Location Weather Card -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col shrink-0">
-          <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
+        <section id="section-weather" class="tab-content bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col shrink-0">
+          <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2 shrink-0">
             <i data-lucide="cloud-sun" class="w-4 h-4 text-orange-500"></i>
             <h2 class="font-bold text-slate-800 text-sm">Live Weather</h2>
           </div>
-          <div class="p-4 flex flex-col">
-            <div class="flex gap-2 mb-3">
+          <div class="p-4 flex flex-col flex-1 min-h-0 lg:flex-none overflow-y-auto">
+            <div class="flex gap-2 mb-3 shrink-0">
               <div class="flex relative flex-grow">
                 <input id="locationQuery" type="text" placeholder="Village or city..." class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-xs transition-all" />
                 <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
@@ -281,7 +312,7 @@
               </button>
             </div>
 
-            <div class="grid grid-cols-4 gap-2 mb-4">
+            <div class="grid grid-cols-4 gap-2 mb-4 shrink-0">
               <div class="bg-slate-50 border border-slate-100 p-2 rounded-xl flex flex-col items-center text-center">
                 <i data-lucide="thermometer" class="w-4 h-4 text-red-500 mb-1"></i>
                 <strong id="temp" class="text-slate-800 text-xs mt-auto">--</strong>
@@ -300,7 +331,7 @@
               </div>
             </div>
 
-            <div class="relative w-full h-[120px] rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+            <div class="relative w-full min-h-[140px] flex-1 lg:flex-none rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
               <div class="absolute inset-0 flex items-center justify-center text-slate-400 flex-col gap-2 p-2 text-center" id="mapPlaceholder">
                 <i data-lucide="map" class="w-5 h-5 opacity-50"></i>
                 <span class="text-[10px] font-medium" id="weatherNote">Search location to view map</span>
@@ -311,33 +342,33 @@
         </section>
 
         <!-- 3. Smart Irrigation Planner -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col shrink-0">
-          <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between">
+        <section id="section-irrigation" class="tab-content bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col shrink-0">
+          <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-2">
               <i data-lucide="droplets" class="w-4 h-4 text-blue-500"></i>
-              <h2 class="font-bold text-slate-800 text-sm">Smart Irrigation Planner</h2>
+              <h2 class="font-bold text-slate-800 text-sm">Irrigation Planner</h2>
             </div>
             <button onclick="renderIrrigationPlanner()" class="text-slate-400 hover:text-blue-600 transition-colors" title="Refresh Planner">
               <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
             </button>
           </div>
-          <div class="p-4 flex flex-col gap-3" id="irrigationFieldsContainer">
+          <div class="p-4 flex flex-col gap-3 overflow-y-auto flex-1 min-h-0 lg:flex-none lg:max-h-[300px] scrollbar-hide" id="irrigationFieldsContainer">
             <!-- Dynamically populated based on farmerProfile.fields -->
           </div>
         </section>
 
         <!-- 4. Crop Advisor -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col shrink-0">
-          <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
+        <section id="section-advisor" class="tab-content bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col shrink-0">
+          <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2 shrink-0">
             <i data-lucide="sprout" class="w-4 h-4 text-emerald-500"></i>
             <h2 class="font-bold text-slate-800 text-sm">AI Crop Advisor</h2>
           </div>
-          <div class="p-4 flex flex-col gap-3">
-            <div class="flex gap-2">
+          <div class="p-4 flex flex-col gap-3 flex-1 min-h-0 lg:flex-none overflow-y-auto">
+            <div class="flex gap-2 shrink-0">
               <input id="advSoil" type="text" placeholder="Soil Type (e.g. Loamy)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs transition-all" />
               <input id="advSeason" type="text" placeholder="Season (e.g. Rabi)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs transition-all" />
             </div>
-            <button id="advBtn" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2">
+            <button id="advBtn" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 shrink-0">
               <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Get Best Crops
             </button>
             
@@ -356,7 +387,7 @@
     </div>
   </main>
 
-  <footer class="mt-auto border-t border-slate-200 bg-white py-6 relative z-10">
+  <footer class="mt-auto border-t border-slate-200 bg-white py-6 relative z-10 shrink-0 hidden lg:block">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2 text-brand-700 font-bold text-sm">
         <i data-lucide="leaf" class="w-4 h-4"></i> AgroCloud Pro
@@ -367,9 +398,33 @@
     </div>
   </footer>
 
+  <!-- Mobile Bottom Navigation -->
+  <nav class="lg:hidden shrink-0 bg-white border-t border-slate-200 flex justify-around items-center z-[100] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+    <button id="nav-btn-chat" class="nav-btn p-3 flex flex-col items-center gap-1 w-1/5 transition-colors" onclick="switchTab('chat')">
+      <i data-lucide="message-square" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium mt-0.5">Chat</span>
+    </button>
+    <button id="nav-btn-profile" class="nav-btn p-3 flex flex-col items-center gap-1 w-1/5 transition-colors" onclick="switchTab('profile')">
+      <i data-lucide="user" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium mt-0.5">Profile</span>
+    </button>
+    <button id="nav-btn-weather" class="nav-btn p-3 flex flex-col items-center gap-1 w-1/5 transition-colors" onclick="switchTab('weather')">
+      <i data-lucide="cloud-sun" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium mt-0.5">Weather</span>
+    </button>
+    <button id="nav-btn-irrigation" class="nav-btn p-3 flex flex-col items-center gap-1 w-1/5 transition-colors" onclick="switchTab('irrigation')">
+      <i data-lucide="droplets" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium mt-0.5">Water</span>
+    </button>
+    <button id="nav-btn-advisor" class="nav-btn p-3 flex flex-col items-center gap-1 w-1/5 transition-colors" onclick="switchTab('advisor')">
+      <i data-lucide="sprout" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium mt-0.5">Advisor</span>
+    </button>
+  </nav>
+
   <!-- Profile Onboarding Modal -->
   <div id="profileModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4 fade-in">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[85dvh]">
       <div class="relative p-5 border-b border-slate-100 bg-brand-50 flex flex-col items-center text-center shrink-0">
         <button id="closeProfileModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 transition-colors hidden">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -377,21 +432,22 @@
         <div class="bg-brand-100 p-3 rounded-full text-brand-600 mb-2">
           <i data-lucide="user-check" class="w-6 h-6"></i>
         </div>
-        <h2 class="text-xl font-bold text-brand-900">Welcome to AgroCloud</h2>
-        <p class="text-sm text-brand-700 mt-1">Enter your farm details to personalize your AI.</p>
+        <h2 class="text-xl font-bold text-brand-900">Farm Setup</h2>
+        <p class="text-sm text-brand-700 mt-1">Enter details to personalize your AI.</p>
       </div>
       
-      <div class="p-5 flex flex-col gap-4 overflow-y-auto scrollbar-hide">
-        <div>
+      <!-- Fixed scroll area: using flex-1 min-h-0 forces the scrolling to stay locked within this div -->
+      <div class="p-5 flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
+        <div class="shrink-0">
           <label class="block text-xs font-semibold text-slate-600 mb-1">Your Name <span class="text-red-500">*</span></label>
-          <input id="profName" type="text" placeholder="e.g. Gurpreet Singh" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm transition-all" />
+          <input id="profName" type="text" placeholder="e.g. Gurpreet Singh" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm transition-all" />
         </div>
         
-        <div class="flex gap-3">
+        <div class="flex gap-3 shrink-0">
           <div class="flex-1">
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Village / Town <span class="text-red-500">*</span></label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Village <span class="text-red-500">*</span></label>
             <div class="relative flex items-center">
-              <input id="profVillage" type="text" placeholder="e.g. Khanna" class="w-full pl-3 pr-9 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm transition-all" />
+              <input id="profVillage" type="text" placeholder="e.g. Khanna" class="w-full pl-3 pr-9 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm transition-all" />
               <button id="profGpsBtn" class="absolute right-1.5 p-1.5 text-brand-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-md shadow-sm transition-all" title="Auto-detect Location">
                 <i data-lucide="crosshair" class="w-3.5 h-3.5"></i>
               </button>
@@ -399,25 +455,24 @@
           </div>
           <div class="flex-1">
             <label class="block text-xs font-semibold text-slate-600 mb-1">Water Source</label>
-            <input id="profWater" type="text" placeholder="e.g. Canal" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm transition-all" />
+            <input id="profWater" type="text" placeholder="e.g. Canal" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm transition-all" />
           </div>
         </div>
 
-        <hr class="border-slate-200 my-1" />
+        <hr class="border-slate-200 my-1 shrink-0" />
 
-        <!-- Dynamic Field Section -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">How many fields do you have? <span class="text-red-500">*</span></label>
-          <input id="profNumFields" type="number" min="1" max="10" value="1" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm transition-all" />
+        <div class="shrink-0">
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Number of fields <span class="text-red-500">*</span></label>
+          <input id="profNumFields" type="number" min="1" max="10" value="1" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm transition-all" />
         </div>
 
-        <div id="profFieldsContainer" class="flex flex-col gap-3 p-3 bg-slate-100 border border-slate-200 rounded-xl">
+        <div id="profFieldsContainer" class="flex flex-col gap-3 p-3 bg-slate-100 border border-slate-200 rounded-xl shrink-0">
           <!-- Populated by JS based on Number of Fields -->
         </div>
       </div>
 
       <div class="p-4 border-t border-slate-100 bg-slate-50 shrink-0">
-        <button id="saveProfileBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl transition-all shadow-sm active:scale-95">
+        <button id="saveProfileBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-sm active:scale-95">
           Save Profile & Start
         </button>
       </div>
@@ -428,8 +483,45 @@
     // Initialize Icons
     lucide.createIcons();
 
+    // Mobile Navigation Switcher
+    function switchTab(tabId) {
+      document.body.setAttribute('data-active-tab', tabId);
+    }
+
     // The environment will inject the Gemini API key here
     const apiKey = ""; 
+
+    // Custom Toast Notification System (replaces alert)
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `fixed top-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-xl shadow-2xl z-[200] text-sm font-semibold fade-in flex items-center gap-2 ${type === 'error' ? 'bg-red-600 text-white' : 'bg-brand-800 text-white'}`;
+      toast.innerHTML = type === 'error' 
+        ? `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ${message}`
+        : `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> ${message}`;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translate(-50%, -15px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Exponential Backoff API Wrapper
+    async function fetchWithBackoff(url, options, maxRetries = 5) {
+      const delays = [1000, 2000, 4000, 8000, 16000];
+      for (let i = 0; i < maxRetries; i++) {
+        try {
+          const response = await fetch(url, options);
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          return await response.json();
+        } catch (error) {
+          if (i === maxRetries - 1) throw new Error("Service is temporarily unavailable after multiple attempts. Please try again.");
+          await new Promise(resolve => setTimeout(resolve, delays[i]));
+        }
+      }
+    }
 
     // --- STATE / LOCAL STORAGE ---
     let farmerProfile = JSON.parse(localStorage.getItem('agroCloudProfile')) || null;
@@ -437,6 +529,7 @@
     // Elements - Profile Modal
     const profileModal = document.getElementById("profileModal");
     const editProfileBtn = document.getElementById("editProfileBtn");
+    const mobileEditProfileBtn = document.getElementById("mobileEditProfileBtn");
     const saveProfileBtn = document.getElementById("saveProfileBtn");
     const closeProfileModalBtn = document.getElementById("closeProfileModalBtn");
     const profGpsBtn = document.getElementById("profGpsBtn");
@@ -455,21 +548,50 @@
     let currentLat = null;
     let currentLon = null;
 
-    // Dynamic Form Builder for Fields
+    // Dynamic Form Builder for Fields - FIXED TO PREVENT DATA LOSS WHILE TYPING
     function renderProfileFieldInputs() {
       const num = parseInt(profNumFields?.value) || 1;
+      
+      // Preserve current user inputs before wiping the container
+      const currentInputs = [];
+      const existingContainer = document.getElementById("profFieldsContainer");
+      if (existingContainer) {
+          for(let i=1; i<=10; i++) {
+              const nameEl = document.getElementById(`field_name_${i}`);
+              const cropEl = document.getElementById(`field_crop_${i}`);
+              const acresEl = document.getElementById(`field_acres_${i}`);
+              if (nameEl || cropEl || acresEl) {
+                  currentInputs.push({
+                      name: nameEl?.value || '',
+                      crop: cropEl?.value || '',
+                      acres: acresEl?.value || ''
+                  });
+              }
+          }
+      }
+
       let html = '';
       for(let i=1; i<=num; i++) {
         let existingName = '', existingCrop = '', existingAcres = '';
-        if (farmerProfile && farmerProfile.fields && farmerProfile.fields[i-1]) {
+        
+        // 1st Priority: Preserve what the user was just typing
+        if (currentInputs[i-1]) {
+            existingName = currentInputs[i-1].name;
+            existingCrop = currentInputs[i-1].crop;
+            existingAcres = currentInputs[i-1].acres;
+        } 
+        // 2nd Priority: Load from saved local storage profile
+        else if (farmerProfile && farmerProfile.fields && farmerProfile.fields[i-1]) {
           existingName = farmerProfile.fields[i-1].name || '';
           existingCrop = farmerProfile.fields[i-1].crop || '';
           existingAcres = farmerProfile.fields[i-1].acres || '';
         }
 
         html += `
-          <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-2.5">
-            <span class="text-xs font-bold text-brand-700 uppercase tracking-wider">Field ${i} Details</span>
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-2.5 fade-in">
+            <span class="text-xs font-bold text-brand-700 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="map" class="w-3.5 h-3.5"></i> Field ${i} Details
+            </span>
             <input type="text" id="field_name_${i}" value="${existingName}" placeholder="Field Name (e.g. North Plot)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all" />
             <div class="grid grid-cols-3 gap-2">
               <input type="text" id="field_crop_${i}" value="${existingCrop}" placeholder="Crop (e.g. Wheat)" class="col-span-2 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all" />
@@ -478,10 +600,14 @@
           </div>
         `;
       }
-      if (profFieldsContainer) profFieldsContainer.innerHTML = html;
+      if (profFieldsContainer) {
+        profFieldsContainer.innerHTML = html;
+        lucide.createIcons(); // Ensure icons load for newly added fields
+      }
     }
     
-    if (profNumFields) profNumFields.addEventListener("input", renderProfileFieldInputs);
+    // Change to 'change' so mobile keyboards don't glitch on every keystroke
+    if (profNumFields) profNumFields.addEventListener("change", renderProfileFieldInputs);
 
     function updateProfileDisplay() {
       if (farmerProfile) {
@@ -519,7 +645,8 @@
         closeProfileModalBtn.classList.add("hidden");
       }
 
-      if(!profFieldsContainer.innerHTML.trim()) renderProfileFieldInputs();
+      // Fix: Check if it actually has child elements instead of just innerHTML text, because HTML comments trick the .trim() check
+      if(profFieldsContainer.children.length === 0) renderProfileFieldInputs();
     }
 
     function hideProfileModal() {
@@ -578,24 +705,21 @@
         }
         
         if (!n || !v || hasMissing) {
-          alert("Please fill in your Name, Village, and all Field names/crops.");
+          showToast("Please fill in your Name, Village, and all Field names & crops.", "error");
           return;
         }
         
-        farmerProfile = {
-          name: n,
-          village: v,
-          water: w,
-          fields: fields
-        };
+        farmerProfile = { name: n, village: v, water: w, fields: fields };
         
         localStorage.setItem('agroCloudProfile', JSON.stringify(farmerProfile));
         updateProfileDisplay();
         hideProfileModal();
+        showToast("Profile saved successfully.");
       });
     }
 
     if (editProfileBtn) editProfileBtn.addEventListener("click", () => showProfileModal(true));
+    if (mobileEditProfileBtn) mobileEditProfileBtn.addEventListener("click", () => showProfileModal(true));
 
     if (!farmerProfile) {
       showProfileModal(false);
@@ -615,6 +739,7 @@
     const clearChatImageBtn = document.getElementById("clearChatImageBtn");
 
     let chatHistory = [];
+    let currentSelectedFile = null;
 
     function addMessage(htmlContent, type, isHtml = false, msgId = null) {
       const wrapper = document.createElement("div");
@@ -623,15 +748,17 @@
       
       const bubble = document.createElement("div");
       bubble.className = type === 'bot' 
-        ? 'bg-slate-50 text-slate-800 p-3 sm:p-4 rounded-2xl rounded-tl-sm text-sm shadow-sm border border-slate-200 leading-relaxed overflow-hidden chat-markdown' 
-        : 'bg-brand-600 text-white p-3 sm:p-4 rounded-2xl rounded-tr-sm text-sm shadow-sm leading-relaxed overflow-hidden';
+        ? 'bg-slate-50 text-slate-800 p-3.5 sm:p-4 rounded-2xl rounded-tl-sm text-sm shadow-sm border border-slate-200 leading-relaxed overflow-hidden chat-markdown' 
+        : 'bg-brand-600 text-white p-3.5 sm:p-4 rounded-2xl rounded-tr-sm text-sm shadow-sm leading-relaxed overflow-hidden';
       
       if (isHtml) bubble.innerHTML = htmlContent;
       else bubble.textContent = htmlContent;
       
       wrapper.appendChild(bubble);
       chatBox.appendChild(wrapper);
-      chatBox.scrollTop = chatBox.scrollHeight;
+      
+      // Scroll to bottom smoothly
+      chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
       lucide.createIcons();
     }
 
@@ -641,7 +768,7 @@
         const bubble = msgWrapper.querySelector('div');
         bubble.innerHTML = htmlContent;
         lucide.createIcons();
-        chatBox.scrollTop = chatBox.scrollHeight;
+        chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
       }
     }
 
@@ -688,7 +815,7 @@
         reader.onload = (e) => {
           chatImagePreview.src = e.target.result;
           imagePreviewContainer.classList.remove("hidden");
-          chatInput.placeholder = "Ask something about this image...";
+          chatInput.placeholder = "Ask about this crop...";
         };
         reader.readAsDataURL(file);
       });
@@ -700,7 +827,7 @@
         if (chatImageInput) chatImageInput.value = "";
         if (chatImagePreview) chatImagePreview.src = "";
         if (imagePreviewContainer) imagePreviewContainer.classList.add("hidden");
-        if (chatInput) chatInput.placeholder = "Message your AI assistant or upload a crop photo...";
+        if (chatInput) chatInput.placeholder = "Ask AI or upload a crop photo...";
       });
     }
 
@@ -734,7 +861,7 @@
     // --- API LOGIC (GEMINI & PLANT.ID) ---
     async function askGemini(userText, contextStr = "") {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-      const systemInstruction = `You are AgroCloud AI, an expert, friendly agricultural assistant for Indian farmers. Keep answers practical, easy to read, and use bullet points.`;
+      const systemInstruction = `You are AgroCloud AI, an expert, friendly agricultural assistant for Indian farmers. Keep answers practical, easy to read, and use short bullet points. Avoid overwhelming long paragraphs.`;
       
       let contents = chatHistory.map(msg => ({ role: msg.role, parts: [{ text: msg.text }] }));
       
@@ -748,12 +875,11 @@
       contents.push({ role: "user", parts: [{ text: promptToSend }] });
 
       try {
-        const response = await fetch(url, {
+        const data = await fetchWithBackoff(url, {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ contents, systemInstruction: { parts: [{ text: systemInstruction }] } })
         });
-        if (!response.ok) throw new Error("AI failed to generate response.");
-        const data = await response.json();
+        
         const aiResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't process that.";
         
         chatHistory.push({ role: "user", text: promptToSend });
@@ -762,22 +888,23 @@
 
         return parseMarkdown(aiResponseText);
       } catch (err) {
-        return `<p class="text-red-600"><strong>Error:</strong> AI service unavailable.</p>`;
+        return `<p class="text-red-600"><strong>Error:</strong> AI service temporarily unavailable. ${err.message}</p>`;
       }
     }
 
     async function processCropImage(file) {
       const apiUrl = "https://plant.id/api/v3/health_assessment";
-      const plantApiKey = "DkbBILLbE96iDo3eWXdppvyRX5OvAgZwljpGEvApWXxLPXOP02";
+      const plantApiKey = "fsYXwOUhKHGWV32KP9IhJn7EXsoFVoK7JfrKB8rkDhqeevA10Y";
       const dataUrl = await compressImageToDataUrl(file);
       const base64Image = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
 
+      // Note: Plant.id requires its own fetch logic since it's a separate API endpoint
       const res = await fetch(apiUrl, {
         method: "POST", headers: { "Content-Type": "application/json", "Api-Key": plantApiKey },
         body: JSON.stringify({ images: [base64Image] })
       });
       const payload = await res.json();
-      if (!res.ok) throw new Error(payload?.error?.message || "Communication failed.");
+      if (!res.ok) throw new Error(payload?.error?.message || "Image scan failed.");
 
       const resultObj = payload.result;
       if (resultObj?.is_plant?.binary === false) {
@@ -801,7 +928,7 @@
         ${!isHealthy ? `<span class="block text-xs font-semibold text-red-600 mt-1">Diagnosis: ${diseaseText}</span>` : ''}
       </div>`;
 
-      const diagnosticContext = `Plant detected: ${plantName}. Status: ${isHealthy ? 'Healthy' : 'Diseased'}. ${diseaseText ? `Disease: ${diseaseText}.` : ''} Formulate advice based on this.`;
+      const diagnosticContext = `Plant detected: ${plantName}. Status: ${isHealthy ? 'Healthy' : 'Diseased'}. ${diseaseText ? `Disease: ${diseaseText}.` : ''} Formulate practical advice based on this for an Indian farmer.`;
       return { html, diagnosticContext };
     }
 
@@ -812,7 +939,7 @@
 
       if (sendBtn) sendBtn.disabled = true;
       let userHtml = `<div class="flex flex-col gap-2">`;
-      if (file && chatImagePreview) userHtml += `<img src="${chatImagePreview.src}" class="w-48 h-48 sm:w-56 sm:h-56 object-cover rounded-xl border border-white/20 shadow-sm" />`;
+      if (file && chatImagePreview) userHtml += `<img src="${chatImagePreview.src}" class="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded-xl border border-white/20 shadow-sm" />`;
       if (text) userHtml += `<p>${text}</p>`;
       userHtml += `</div>`;
       addMessage(userHtml, "user", true);
@@ -841,7 +968,7 @@
         updateMessage(loadingId, `<p class="text-red-600 text-sm">Processing Error: ${error.message}</p>`);
       } finally {
         if (sendBtn) sendBtn.disabled = false;
-        if (chatInput) chatInput.focus();
+        if (chatInput && window.innerWidth >= 1024) chatInput.focus(); // Only auto-focus on desktop to prevent mobile keyboard jumping
       }
     }
 
@@ -877,7 +1004,7 @@
       }
 
       if (searchLocationBtn) {
-        searchLocationBtn.innerHTML = "Searching...";
+        searchLocationBtn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>`;
         searchLocationBtn.disabled = true;
       }
 
@@ -886,7 +1013,7 @@
         const data = await res.json();
         if (!data.length) throw new Error();
         
-        if (locationSelect) locationSelect.innerHTML = data.map(i => `<option value="${i.lat},${i.lon}">${i.display_name}</option>`).join('');
+        if (locationSelect) locationSelect.innerHTML = data.map(i => `<option value="${i.lat},${i.lon}">${i.display_name.split(',')[0]} - ${i.display_name.split(',').pop()}</option>`).join('');
         setMap(data[0].lat, data[0].lon);
         if (weatherNote) weatherNote.textContent = "Found! Click 'Update'.";
       } catch (error) {
@@ -896,6 +1023,7 @@
           searchLocationBtn.innerHTML = "Search";
           searchLocationBtn.disabled = false;
         }
+        lucide.createIcons();
       }
     }
 
@@ -929,7 +1057,7 @@
           hour = hour % 12 || 12;
           timeEl.textContent = `${hour}:${m} ${ampm}`;
         }
-      } catch (error) { } 
+      } catch (error) { showToast("Could not load weather.", "error"); } 
       finally {
         if (weatherBtn) {
           weatherBtn.innerHTML = "Update";
@@ -957,6 +1085,7 @@
         }, () => { 
           gpsBtn.innerHTML = `<i data-lucide="crosshair" class="w-4 h-4"></i>`; 
           lucide.createIcons(); 
+          showToast("GPS access denied.", "error");
         });
       });
     }
@@ -979,21 +1108,21 @@
       let html = '';
       farmerProfile.fields.forEach((field, index) => {
         html += `
-          <div class="bg-white border border-slate-200 rounded-xl p-3 flex flex-col gap-2 shadow-sm" id="irr_card_${index}">
+          <div class="bg-white border border-slate-200 rounded-xl p-3 flex flex-col gap-2 shadow-sm shrink-0" id="irr_card_${index}">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2 mb-1">
-              <strong class="text-sm text-slate-800">${field.name}</strong>
-              <span class="text-[10px] bg-brand-50 text-brand-700 px-2 py-0.5 rounded-md font-bold border border-brand-100">${field.crop}</span>
+              <strong class="text-sm text-slate-800 truncate pr-2">${field.name}</strong>
+              <span class="text-[10px] bg-brand-50 text-brand-700 px-2 py-0.5 rounded-md font-bold border border-brand-100 shrink-0">${field.crop}</span>
             </div>
             
             <div class="flex items-center justify-between gap-2">
-              <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Last Irrigated:</label>
+              <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Last Watered:</label>
               <input type="date" id="irr_date_${index}" class="px-2 py-1 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-700 focus:ring-1 focus:ring-blue-500 focus:outline-none" />
             </div>
             
             <div id="irr_status_${index}" class="text-xs text-center font-medium hidden mt-1 bg-slate-50 py-1.5 rounded-md border"></div>
             
             <button id="irr_btn_${index}" onclick="calculateIrrigation(${index}, '${field.crop}')" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5">
-               Check Irrigation Need
+               Check Needs
             </button>
             
             <div id="irr_timer_container_${index}" class="hidden flex-col items-center p-3 bg-blue-50 border border-blue-200 rounded-xl mt-2 relative overflow-hidden">
@@ -1022,7 +1151,7 @@
       const btn = document.getElementById(`irr_btn_${index}`);
 
       if (!dateInput) {
-        alert("Please select the date when you last watered this field.");
+        showToast("Select the date when you last watered this field.", "error");
         return;
       }
 
@@ -1035,7 +1164,7 @@
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
       if (diffDays < 0) {
-        alert("Last irrigated date cannot be in the future.");
+        showToast("Last irrigated date cannot be in the future.", "error");
         return;
       }
 
@@ -1095,7 +1224,7 @@
 
          if (rem <= 0) {
            clearInterval(fieldTimers[index]);
-           alert(`Irrigation complete for Field ${index + 1}!`);
+           showToast(`Irrigation complete for Field ${index + 1}!`);
            stopIrrigation(index);
          }
        }
@@ -1116,7 +1245,7 @@
        
        if (btn) {
          btn.classList.remove("hidden");
-         btn.innerHTML = "Check Irrigation Need";
+         btn.innerHTML = "Check Needs";
          btn.className = "w-full bg-slate-800 hover:bg-slate-900 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm";
          const crop = farmerProfile?.fields?.[index]?.crop || 'wheat';
          btn.onclick = () => calculateIrrigation(index, crop);
@@ -1129,14 +1258,13 @@
        if (dateInputEl) dateInputEl.value = todayStr;
     }
 
-
     // --- CROP ADVISOR ---
     const advBtn = document.getElementById("advBtn");
     if(advBtn) {
       advBtn.addEventListener("click", async () => {
         const soil = document.getElementById("advSoil")?.value?.trim() || '';
         const season = document.getElementById("advSeason")?.value?.trim() || '';
-        if (!soil || !season) { alert("Enter soil and season."); return; }
+        if (!soil || !season) { showToast("Enter soil type and season.", "error"); return; }
 
         const origHtml = advBtn.innerHTML;
         advBtn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Analyzing...`;
@@ -1174,7 +1302,7 @@
             advResults.classList.add("flex");
           }
         } catch (err) {
-          alert("Advisor error. Please try again.");
+          showToast("Advisor error. Please try again.", "error");
         } finally {
           advBtn.innerHTML = origHtml;
           advBtn.disabled = false;
@@ -1183,6 +1311,15 @@
       });
     }
 
+    // --- GOOGLE TRANSLATE INIT ---
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
   </script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

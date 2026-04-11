@@ -205,9 +205,17 @@
           </div>
           
           <!-- Chat Input Area -->
-          <div class="p-3 sm:p-4 bg-slate-50 border-t border-slate-200">
+          <div class="p-3 sm:p-4 bg-slate-50 border-t border-slate-200 flex flex-col gap-2">
+            
+            <!-- Quick Prompts Row -->
+            <div class="flex gap-2 pb-2 overflow-x-auto scrollbar-hide">
+              <button class="quick-prompt-btn bg-white border border-slate-200 text-slate-600 text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 transition-all font-medium shadow-sm flex items-center gap-1">✨ Daily Action Plan</button>
+              <button class="quick-prompt-btn bg-white border border-slate-200 text-slate-600 text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 transition-all font-medium shadow-sm flex items-center gap-1">✨ Fertilizer Schedule</button>
+              <button class="quick-prompt-btn bg-white border border-slate-200 text-slate-600 text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 transition-all font-medium shadow-sm flex items-center gap-1">✨ Market Trends & Tips</button>
+            </div>
+
             <!-- Image Preview Wrapper -->
-            <div id="imagePreviewContainer" class="hidden relative mb-3 w-24 h-24 fade-in">
+            <div id="imagePreviewContainer" class="hidden relative mb-1 w-24 h-24 fade-in">
               <img id="chatImagePreview" class="w-full h-full object-cover rounded-xl border border-slate-300 shadow-sm" />
               <button id="clearChatImageBtn" class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full shadow-md transition-colors">
                 <i data-lucide="x" class="w-3 h-3"></i>
@@ -265,7 +273,7 @@
                 <input id="locationQuery" type="text" placeholder="Village or city..." class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-xs transition-all" />
                 <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
               </div>
-              <button id="searchLocationBtn" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-all shrink-0">
+              <button id="searchLocationBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-all shrink-0">
                 Search
               </button>
               <button id="gpsBtn" class="bg-white hover:bg-slate-50 text-brand-600 px-3 py-2 border border-slate-200 rounded-lg transition-all shadow-sm shrink-0 active:scale-95" title="Use GPS">
@@ -339,7 +347,7 @@
               <input id="advSoil" type="text" placeholder="Soil Type (e.g. Loamy)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs transition-all" />
               <input id="advSeason" type="text" placeholder="Season (e.g. Rabi)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs transition-all" />
             </div>
-            <button id="advBtn" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2">
+            <button id="advBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2">
               <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Get Best Crops
             </button>
             
@@ -347,6 +355,28 @@
             <div id="advResults" class="hidden flex-col gap-2 mt-2 fade-in">
               <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Top Recommendations</span>
               <div id="advGrid" class="grid grid-cols-2 gap-2">
+                <!-- JS Populated -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. AI Subsidy Matcher -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col shrink-0">
+          <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
+            <i data-lucide="landmark" class="w-4 h-4 text-purple-600"></i>
+            <h2 class="font-bold text-slate-800 text-sm">AI Subsidy Matcher</h2>
+          </div>
+          <div class="p-4 flex flex-col gap-3">
+            <p class="text-[11px] text-slate-500 leading-snug">Discover Indian Govt agricultural schemes and subsidies tailored directly to your farm's profile.</p>
+            <button id="subsidyBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 shadow-sm">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Find Eligible Schemes
+            </button>
+            
+            <!-- Subsidy Results Area -->
+            <div id="subsidyResults" class="hidden flex-col gap-2 mt-2 fade-in">
+              <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Top Matches For You</span>
+              <div id="subsidyList" class="flex flex-col gap-2">
                 <!-- JS Populated -->
               </div>
             </div>
@@ -883,6 +913,16 @@
     if (sendBtn) sendBtn.addEventListener("click", handleSend);
     if (chatInput) chatInput.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } });
 
+    // Quick Prompts UI Logic
+    document.querySelectorAll('.quick-prompt-btn').forEach(btn => {
+       btn.addEventListener('click', () => {
+          if (chatInput) {
+            chatInput.value = btn.textContent.replace('✨ ', '');
+            handleSend();
+          }
+       });
+    });
+
     // --- MAP & WEATHER LOGIC ---
     const locationQuery = document.getElementById("locationQuery");
     const searchLocationBtn = document.getElementById("searchLocationBtn");
@@ -1030,7 +1070,7 @@
             
             <div id="irr_status_${index}" class="text-xs text-center font-medium hidden mt-1 bg-slate-50 py-1.5 rounded-md border"></div>
             
-            <button id="irr_btn_${index}" onclick="calculateIrrigation(${index}, '${field.crop}')" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5">
+            <button id="irr_btn_${index}" onclick="calculateIrrigation(${index}, '${field.crop}')" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5">
                Check Irrigation Need
             </button>
             
@@ -1090,7 +1130,7 @@
         }
         if (btn) {
           btn.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5 inline"></i> Start ${duration}m Timer`;
-          btn.className = "w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5";
+          btn.className = "w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5";
           btn.onclick = () => startIrrigation(index, duration);
         }
       } else {
@@ -1101,7 +1141,7 @@
         }
         if (btn) {
           btn.innerHTML = `<i data-lucide="refresh-ccw" class="w-3.5 h-3.5 inline"></i> Re-Calculate`;
-          btn.className = "w-full bg-slate-800 hover:bg-slate-900 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5";
+          btn.className = "w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5";
         }
       }
       lucide.createIcons();
@@ -1155,7 +1195,7 @@
        if (btn) {
          btn.classList.remove("hidden");
          btn.innerHTML = "Check Irrigation Need";
-         btn.className = "w-full bg-slate-800 hover:bg-slate-900 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm";
+         btn.className = "w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm";
          const crop = farmerProfile?.fields?.[index]?.crop || 'wheat';
          btn.onclick = () => calculateIrrigation(index, crop);
        }
@@ -1199,7 +1239,7 @@
           const grid = document.getElementById("advGrid");
           if (grid) {
             grid.innerHTML = crops.slice(0,4).map(c => `
-              <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-2 text-center flex flex-col">
+              <div class="bg-brand-50 border border-brand-100 rounded-lg p-2 text-center flex flex-col">
                 <span class="text-xl mb-1">${c.emoji || '🌱'}</span>
                 <span class="font-bold text-slate-800 text-[11px]">${c.name}</span>
                 <span class="text-[9px] text-slate-500 leading-tight mt-1">${c.why}</span>
@@ -1216,6 +1256,60 @@
         } finally {
           advBtn.innerHTML = origHtml;
           advBtn.disabled = false;
+          lucide.createIcons();
+        }
+      });
+    }
+
+    // --- AI SUBSIDY MATCHER ---
+    const subsidyBtn = document.getElementById("subsidyBtn");
+    if(subsidyBtn) {
+      subsidyBtn.addEventListener("click", async () => {
+        if (!farmerProfile || !farmerProfile.name) {
+          showToast("Please complete your Farm Profile to find personalized schemes.", "error");
+          return;
+        }
+
+        const origHtml = subsidyBtn.innerHTML;
+        subsidyBtn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Searching Schemes...`;
+        subsidyBtn.disabled = true;
+        
+        const subsidyResults = document.getElementById("subsidyResults");
+        if (subsidyResults) subsidyResults.classList.add("hidden");
+
+        const prompt = `Farmer context:\n${getFarmerContext()}\nRecommend the TOP 3 Indian government agricultural schemes/subsidies most relevant to this exact profile. Return strictly a JSON array like: [{"scheme":"Scheme Name","desc":"Brief reason why it helps"}]`;
+
+        try {
+          const res = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: { responseMimeType: "application/json" }
+            })
+          });
+          const data = await res.json();
+          const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+          const schemes = JSON.parse(raw);
+
+          const list = document.getElementById("subsidyList");
+          if (list) {
+            list.innerHTML = schemes.slice(0,3).map(s => `
+              <div class="bg-brand-50 border border-brand-100 rounded-lg p-2.5 flex flex-col gap-1 shadow-sm">
+                <strong class="text-slate-800 text-[11px] flex items-center gap-1.5"><i data-lucide="check-circle" class="w-3 h-3 text-brand-600"></i> ${s.scheme}</strong>
+                <span class="text-[10px] text-slate-600 leading-snug pl-4">${s.desc}</span>
+              </div>
+            `).join('');
+          }
+
+          if (subsidyResults) {
+            subsidyResults.classList.remove("hidden");
+            subsidyResults.classList.add("flex");
+          }
+        } catch (err) {
+          showToast("Subsidy matcher error. Please try again.", "error");
+        } finally {
+          subsidyBtn.innerHTML = origHtml;
+          subsidyBtn.disabled = false;
           lucide.createIcons();
         }
       });

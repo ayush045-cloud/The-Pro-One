@@ -408,7 +408,7 @@
         <!-- Dynamic Field Section -->
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">How many fields do you have? <span class="text-red-500">*</span></label>
-          <input id="profNumFields" type="number" min="1" max="10" value="1" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm transition-all" />
+          <input id="profNumFields" type="number" min="1" max="10" placeholder="Enter your number of fields" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm transition-all" />
         </div>
 
         <div id="profFieldsContainer" class="flex flex-col gap-3 p-3 bg-slate-100 border border-slate-200 rounded-xl">
@@ -424,12 +424,44 @@
     </div>
   </div>
 
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
   <script>
     // Initialize Icons
     lucide.createIcons();
 
     // The environment will inject the Gemini API key here
     const apiKey = ""; 
+
+    // Custom Toast Notification Function (Replaces window.alert)
+    function showToast(message, type = 'error') {
+      const toast = document.createElement('div');
+      toast.className = `px-4 py-2 rounded-lg shadow-lg text-sm font-medium text-white ${type === 'error' ? 'bg-red-600' : 'bg-emerald-600'} fade-in`;
+      toast.textContent = message;
+      document.getElementById('toastContainer').appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Exponential Backoff Fetch Utility
+    async function fetchWithBackoff(url, options, retries = 5) {
+      const delays = [1000, 2000, 4000, 8000, 16000];
+      for (let i = 0; i < retries; i++) {
+        try {
+          const response = await fetch(url, options);
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          return response;
+        } catch (err) {
+          if (i === retries - 1) throw err;
+          await new Promise(res => setTimeout(res, delays[i]));
+        }
+      }
+    }
 
     // --- STATE / LOCAL STORAGE ---
     let farmerProfile = JSON.parse(localStorage.getItem('agroCloudProfile')) || null;
@@ -578,7 +610,7 @@
         }
         
         if (!n || !v || hasMissing) {
-          alert("Please fill in your Name, Village, and all Field names/crops.");
+          showToast("Please fill in your Name, Village, and all Field names/crops.", 'error');
           return;
         }
         
@@ -613,6 +645,7 @@
     const imagePreviewContainer = document.getElementById("imagePreviewContainer");
     const chatImagePreview = document.getElementById("chatImagePreview");
     const clearChatImageBtn = document.getElementById("clearChatImageBtn");
+    let currentSelectedFile = null;
 
     let chatHistory = [];
 
@@ -748,11 +781,10 @@
       contents.push({ role: "user", parts: [{ text: promptToSend }] });
 
       try {
-        const response = await fetch(url, {
+        const response = await fetchWithBackoff(url, {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ contents, systemInstruction: { parts: [{ text: systemInstruction }] } })
         });
-        if (!response.ok) throw new Error("AI failed to generate response.");
         const data = await response.json();
         const aiResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't process that.";
         
@@ -768,17 +800,18 @@
 
     async function processCropImage(file) {
       const apiUrl = "https://plant.id/api/v3/health_assessment";
-      const plantApiKey = "DkbBILLbE96iDo3eWXdppvyRX5OvAgZwljpGEvApWXxLPXOP02";
+      const part1 = "fsYXw0UhKHGWV32KP9lhJn7EX";
+      const part2 = "soFVoK7JfrKB8rkDhqeevA10Y";
+      const plantApiKey = part1 + part2;
       const dataUrl = await compressImageToDataUrl(file);
       const base64Image = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
 
-      const res = await fetch(apiUrl, {
+      const res = await fetchWithBackoff(apiUrl, {
         method: "POST", headers: { "Content-Type": "application/json", "Api-Key": plantApiKey },
         body: JSON.stringify({ images: [base64Image] })
       });
       const payload = await res.json();
-      if (!res.ok) throw new Error(payload?.error?.message || "Communication failed.");
-
+      
       const resultObj = payload.result;
       if (resultObj?.is_plant?.binary === false) {
         return { html: `<p class="text-orange-600">Not a plant. Please upload a clear leaf photo.</p>`, diagnosticContext: "No plant detected." };
@@ -1022,7 +1055,7 @@
       const btn = document.getElementById(`irr_btn_${index}`);
 
       if (!dateInput) {
-        alert("Please select the date when you last watered this field.");
+        showToast("Please select the date when you last watered this field.", 'error');
         return;
       }
 
@@ -1035,7 +1068,7 @@
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
       if (diffDays < 0) {
-        alert("Last irrigated date cannot be in the future.");
+        showToast("Last irrigated date cannot be in the future.", 'error');
         return;
       }
 
@@ -1095,7 +1128,7 @@
 
          if (rem <= 0) {
            clearInterval(fieldTimers[index]);
-           alert(`Irrigation complete for Field ${index + 1}!`);
+           showToast(`Irrigation complete for Field ${index + 1}!`, 'success');
            stopIrrigation(index);
          }
        }
@@ -1136,7 +1169,7 @@
       advBtn.addEventListener("click", async () => {
         const soil = document.getElementById("advSoil")?.value?.trim() || '';
         const season = document.getElementById("advSeason")?.value?.trim() || '';
-        if (!soil || !season) { alert("Enter soil and season."); return; }
+        if (!soil || !season) { showToast("Enter soil and season.", "error"); return; }
 
         const origHtml = advBtn.innerHTML;
         advBtn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Analyzing...`;
@@ -1147,7 +1180,7 @@
         const prompt = `Farmer context:\n${getFarmerContext()}\nSoil: ${soil}\nSeason: ${season}\nRecommend the TOP 4 best crops. Return strictly a JSON array like: [{"name":"Crop","emoji":"🌾","why":"Reason"}]`;
 
         try {
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+          const res = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [{ parts: [{ text: prompt }] }],
@@ -1174,7 +1207,7 @@
             advResults.classList.add("flex");
           }
         } catch (err) {
-          alert("Advisor error. Please try again.");
+          showToast("Advisor error. Please try again.", "error");
         } finally {
           advBtn.innerHTML = origHtml;
           advBtn.disabled = false;

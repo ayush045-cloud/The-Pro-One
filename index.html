@@ -488,7 +488,7 @@
     // The environment will inject the Gemini API key here
     const apiKey = ""; 
 
-    // Custom Toast Notification Function (Replaces window.alert)
+    // Custom Toast Notification Function
     function showToast(message, type = 'error') {
       const toast = document.createElement('div');
       toast.className = `px-4 py-2 rounded-lg shadow-lg text-sm font-medium text-white ${type === 'error' ? 'bg-red-600' : 'bg-emerald-600'} fade-in`;
@@ -664,7 +664,7 @@
         }
         
         if (!n || !v || hasMissing) {
-          showToast("Please fill in your Name, Village, and all Field names/crops.", 'error');
+          showToast("Please fill in your Name, Village, and all Field names/crops.", "error");
           return;
         }
         
@@ -699,7 +699,6 @@
     const imagePreviewContainer = document.getElementById("imagePreviewContainer");
     const chatImagePreview = document.getElementById("chatImagePreview");
     const clearChatImageBtn = document.getElementById("clearChatImageBtn");
-    let currentSelectedFile = null;
 
     let chatHistory = [];
 
@@ -865,7 +864,7 @@
         body: JSON.stringify({ images: [base64Image] })
       });
       const payload = await res.json();
-      
+
       const resultObj = payload.result;
       if (resultObj?.is_plant?.binary === false) {
         return { html: `<p class="text-orange-600">Not a plant. Please upload a clear leaf photo.</p>`, diagnosticContext: "No plant detected." };
@@ -1122,7 +1121,7 @@
       const btn = document.getElementById(`irr_btn_${index}`);
 
       if (!dateInput) {
-        showToast("Please select the date when you last watered this field.", 'error');
+        showToast("Please select the date when you last watered this field.", "error");
         return;
       }
 
@@ -1135,7 +1134,7 @@
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
       if (diffDays < 0) {
-        showToast("Last irrigated date cannot be in the future.", 'error');
+        showToast("Last irrigated date cannot be in the future.", "error");
         return;
       }
 
@@ -1195,7 +1194,7 @@
 
          if (rem <= 0) {
            clearInterval(fieldTimers[index]);
-           showToast(`Irrigation complete for Field ${index + 1}!`, 'success');
+           showToast(`Irrigation complete for Field ${index + 1}!`, "success");
            stopIrrigation(index);
          }
        }
@@ -1255,7 +1254,12 @@
             })
           });
           const data = await res.json();
-          const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+          let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+          
+          // Safer JSON extraction directly targeting the array structure
+          const match = raw.match(/\[.*\]/s);
+          if (match) raw = match[0];
+          
           const crops = JSON.parse(raw);
           
           const grid = document.getElementById("advGrid");
@@ -1310,7 +1314,12 @@
             })
           });
           const data = await res.json();
-          const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+          let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+          
+          // Safer JSON extraction directly targeting the array structure
+          const match = raw.match(/\[.*\]/s);
+          if (match) raw = match[0];
+          
           const schemes = JSON.parse(raw);
 
           const list = document.getElementById("subsidyList");
@@ -1364,7 +1373,12 @@
             })
           });
           const data = await res.json();
-          const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+          let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+          
+          // Safer JSON extraction directly targeting the array structure
+          const match = raw.match(/\[.*\]/s);
+          if (match) raw = match[0];
+          
           const tasks = JSON.parse(raw);
 
           const list = document.getElementById("taskList");

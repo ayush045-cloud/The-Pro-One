@@ -383,6 +383,28 @@
           </div>
         </section>
 
+        <!-- 6. AI Seasonal Task Planner -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col shrink-0">
+          <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
+            <i data-lucide="list-todo" class="w-4 h-4 text-blue-600"></i>
+            <h2 class="font-bold text-slate-800 text-sm">AI Seasonal Task Planner</h2>
+          </div>
+          <div class="p-4 flex flex-col gap-3">
+            <p class="text-[11px] text-slate-500 leading-snug">Generate a custom step-by-step task timeline based on your fields, crops, and current weather.</p>
+            <button id="taskPlannerBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 shadow-sm">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Generate Tasks
+            </button>
+            
+            <!-- Task Planner Results Area -->
+            <div id="taskResults" class="hidden flex-col gap-2 mt-2 fade-in">
+              <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Your Action Timeline</span>
+              <div id="taskList" class="flex flex-col gap-2">
+                <!-- JS Populated -->
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
 
     </div>
@@ -1310,6 +1332,60 @@
         } finally {
           subsidyBtn.innerHTML = origHtml;
           subsidyBtn.disabled = false;
+          lucide.createIcons();
+        }
+      });
+    }
+
+    // --- AI SEASONAL TASK PLANNER ---
+    const taskPlannerBtn = document.getElementById("taskPlannerBtn");
+    if(taskPlannerBtn) {
+      taskPlannerBtn.addEventListener("click", async () => {
+        if (!farmerProfile || !farmerProfile.fields || farmerProfile.fields.length === 0) {
+          showToast("Please complete your Farm Profile with fields to plan tasks.", "error");
+          return;
+        }
+
+        const origHtml = taskPlannerBtn.innerHTML;
+        taskPlannerBtn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Planning...`;
+        taskPlannerBtn.disabled = true;
+        
+        const taskResults = document.getElementById("taskResults");
+        if (taskResults) taskResults.classList.add("hidden");
+
+        const prompt = `Farmer context:\n${getFarmerContext()}\nWeather: ${getEnvironmentContext()}\nGenerate a timeline of 3 major upcoming agricultural tasks for the farmer's crops based on standard seasonal needs. Return strictly a JSON array like: [{"phase":"e.g. Next 7 Days", "task":"Specific action required based on crops/weather"}]`;
+
+        try {
+          const res = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: { responseMimeType: "application/json" }
+            })
+          });
+          const data = await res.json();
+          const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+          const tasks = JSON.parse(raw);
+
+          const list = document.getElementById("taskList");
+          if (list) {
+            list.innerHTML = tasks.slice(0,3).map(t => `
+              <div class="bg-brand-50 border border-brand-100 rounded-lg p-2.5 flex flex-col gap-1 shadow-sm border-l-4 border-l-brand-500">
+                <strong class="text-slate-800 text-[11px]">${t.phase}</strong>
+                <span class="text-[10px] text-slate-600 leading-snug">${t.task}</span>
+              </div>
+            `).join('');
+          }
+
+          if (taskResults) {
+            taskResults.classList.remove("hidden");
+            taskResults.classList.add("flex");
+          }
+        } catch (err) {
+          showToast("Task planner error. Please try again.", "error");
+        } finally {
+          taskPlannerBtn.innerHTML = origHtml;
+          taskPlannerBtn.disabled = false;
           lucide.createIcons();
         }
       });

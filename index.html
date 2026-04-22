@@ -205,17 +205,9 @@
           </div>
           
           <!-- Chat Input Area -->
-          <div class="p-3 sm:p-4 bg-slate-50 border-t border-slate-200 flex flex-col gap-2">
-            
-            <!-- Quick Prompts Row -->
-            <div class="flex gap-2 pb-2 overflow-x-auto scrollbar-hide">
-              <button class="quick-prompt-btn bg-white border border-slate-200 text-slate-600 text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 transition-all font-medium shadow-sm flex items-center gap-1">✨ Daily Action Plan</button>
-              <button class="quick-prompt-btn bg-white border border-slate-200 text-slate-600 text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 transition-all font-medium shadow-sm flex items-center gap-1">✨ Fertilizer Schedule</button>
-              <button class="quick-prompt-btn bg-white border border-slate-200 text-slate-600 text-[11px] px-3 py-1.5 rounded-full whitespace-nowrap hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 transition-all font-medium shadow-sm flex items-center gap-1">✨ Market Trends & Tips</button>
-            </div>
-
+          <div class="p-3 sm:p-4 bg-slate-50 border-t border-slate-200">
             <!-- Image Preview Wrapper -->
-            <div id="imagePreviewContainer" class="hidden relative mb-1 w-24 h-24 fade-in">
+            <div id="imagePreviewContainer" class="hidden relative mb-3 w-24 h-24 fade-in">
               <img id="chatImagePreview" class="w-full h-full object-cover rounded-xl border border-slate-300 shadow-sm" />
               <button id="clearChatImageBtn" class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full shadow-md transition-colors">
                 <i data-lucide="x" class="w-3 h-3"></i>
@@ -273,20 +265,18 @@
                 <input id="locationQuery" type="text" placeholder="Village or city..." class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-xs transition-all" />
                 <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
               </div>
-              <button id="searchLocationBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-all shrink-0">
+              <button id="searchLocationBtn" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-all shrink-0">
                 Search
               </button>
               <button id="gpsBtn" class="bg-white hover:bg-slate-50 text-brand-600 px-3 py-2 border border-slate-200 rounded-lg transition-all shadow-sm shrink-0 active:scale-95" title="Use GPS">
                 <i data-lucide="crosshair" class="w-4 h-4"></i>
               </button>
             </div>
-            
             <div class="flex gap-2 mb-4">
-              <div class="relative flex items-center flex-grow">
-                <span class="absolute left-3 text-sm pointer-events-none">📍</span>
-                <input id="locationSelect" type="text" readonly placeholder="Search for a location..." class="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none text-sm text-slate-700 truncate cursor-default shadow-sm" />
-              </div>
-              <button id="weatherBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shrink-0 shadow-sm">
+              <select id="locationSelect" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-xs appearance-none text-slate-700 truncate">
+                <option value="">Select from results...</option>
+              </select>
+              <button id="weatherBtn" class="bg-brand-600 hover:bg-brand-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-all shrink-0">
                 Update
               </button>
             </div>
@@ -347,7 +337,7 @@
               <input id="advSoil" type="text" placeholder="Soil Type (e.g. Loamy)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs transition-all" />
               <input id="advSeason" type="text" placeholder="Season (e.g. Rabi)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs transition-all" />
             </div>
-            <button id="advBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2">
+            <button id="advBtn" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2">
               <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Get Best Crops
             </button>
             
@@ -355,50 +345,6 @@
             <div id="advResults" class="hidden flex-col gap-2 mt-2 fade-in">
               <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Top Recommendations</span>
               <div id="advGrid" class="grid grid-cols-2 gap-2">
-                <!-- JS Populated -->
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 5. AI Subsidy Matcher -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col shrink-0">
-          <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
-            <i data-lucide="landmark" class="w-4 h-4 text-purple-600"></i>
-            <h2 class="font-bold text-slate-800 text-sm">AI Subsidy Matcher</h2>
-          </div>
-          <div class="p-4 flex flex-col gap-3">
-            <p class="text-[11px] text-slate-500 leading-snug">Discover Indian Govt agricultural schemes and subsidies tailored directly to your farm's profile.</p>
-            <button id="subsidyBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 shadow-sm">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Find Eligible Schemes
-            </button>
-            
-            <!-- Subsidy Results Area -->
-            <div id="subsidyResults" class="hidden flex-col gap-2 mt-2 fade-in">
-              <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Top Matches For You</span>
-              <div id="subsidyList" class="flex flex-col gap-2">
-                <!-- JS Populated -->
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 6. AI Seasonal Task Planner -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col shrink-0">
-          <div class="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
-            <i data-lucide="list-todo" class="w-4 h-4 text-blue-600"></i>
-            <h2 class="font-bold text-slate-800 text-sm">AI Seasonal Task Planner</h2>
-          </div>
-          <div class="p-4 flex flex-col gap-3">
-            <p class="text-[11px] text-slate-500 leading-snug">Generate a custom step-by-step task timeline based on your fields, crops, and current weather.</p>
-            <button id="taskPlannerBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 shadow-sm">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Generate Tasks
-            </button>
-            
-            <!-- Task Planner Results Area -->
-            <div id="taskResults" class="hidden flex-col gap-2 mt-2 fade-in">
-              <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Your Action Timeline</span>
-              <div id="taskList" class="flex flex-col gap-2">
                 <!-- JS Populated -->
               </div>
             </div>
@@ -462,7 +408,7 @@
         <!-- Dynamic Field Section -->
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">How many fields do you have? <span class="text-red-500">*</span></label>
-          <input id="profNumFields" type="number" min="1" max="10" placeholder="Enter your number of fields" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm transition-all" />
+          <input id="profNumFields" type="number" min="1" max="10" value="1" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none text-sm transition-all" />
         </div>
 
         <div id="profFieldsContainer" class="flex flex-col gap-3 p-3 bg-slate-100 border border-slate-200 rounded-xl">
@@ -478,44 +424,12 @@
     </div>
   </div>
 
-  <!-- Toast Notification Container -->
-  <div id="toastContainer" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none"></div>
-
   <script>
     // Initialize Icons
     lucide.createIcons();
 
     // The environment will inject the Gemini API key here
     const apiKey = ""; 
-
-    // Custom Toast Notification Function
-    function showToast(message, type = 'error') {
-      const toast = document.createElement('div');
-      toast.className = `px-4 py-2 rounded-lg shadow-lg text-sm font-medium text-white ${type === 'error' ? 'bg-red-600' : 'bg-emerald-600'} fade-in`;
-      toast.textContent = message;
-      document.getElementById('toastContainer').appendChild(toast);
-      
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-      }, 3500);
-    }
-
-    // Exponential Backoff Fetch Utility
-    async function fetchWithBackoff(url, options, retries = 5) {
-      const delays = [1000, 2000, 4000, 8000, 16000];
-      for (let i = 0; i < retries; i++) {
-        try {
-          const response = await fetch(url, options);
-          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-          return response;
-        } catch (err) {
-          if (i === retries - 1) throw err;
-          await new Promise(res => setTimeout(res, delays[i]));
-        }
-      }
-    }
 
     // --- STATE / LOCAL STORAGE ---
     let farmerProfile = JSON.parse(localStorage.getItem('agroCloudProfile')) || null;
@@ -664,7 +578,7 @@
         }
         
         if (!n || !v || hasMissing) {
-          showToast("Please fill in your Name, Village, and all Field names/crops.", "error");
+          alert("Please fill in your Name, Village, and all Field names/crops.");
           return;
         }
         
@@ -834,10 +748,11 @@
       contents.push({ role: "user", parts: [{ text: promptToSend }] });
 
       try {
-        const response = await fetchWithBackoff(url, {
+        const response = await fetch(url, {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ contents, systemInstruction: { parts: [{ text: systemInstruction }] } })
         });
+        if (!response.ok) throw new Error("AI failed to generate response.");
         const data = await response.json();
         const aiResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't process that.";
         
@@ -853,17 +768,16 @@
 
     async function processCropImage(file) {
       const apiUrl = "https://plant.id/api/v3/health_assessment";
-      const part1 = "fsYXw0UhKHGWV32KP9lhJn7EX";
-      const part2 = "soFVoK7JfrKB8rkDhqeevA10Y";
-      const plantApiKey = part1 + part2;
+      const plantApiKey = "DkbBILLbE96iDo3eWXdppvyRX5OvAgZwljpGEvApWXxLPXOP02";
       const dataUrl = await compressImageToDataUrl(file);
       const base64Image = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
 
-      const res = await fetchWithBackoff(apiUrl, {
+      const res = await fetch(apiUrl, {
         method: "POST", headers: { "Content-Type": "application/json", "Api-Key": plantApiKey },
         body: JSON.stringify({ images: [base64Image] })
       });
       const payload = await res.json();
+      if (!res.ok) throw new Error(payload?.error?.message || "Communication failed.");
 
       const resultObj = payload.result;
       if (resultObj?.is_plant?.binary === false) {
@@ -934,16 +848,6 @@
     if (sendBtn) sendBtn.addEventListener("click", handleSend);
     if (chatInput) chatInput.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } });
 
-    // Quick Prompts UI Logic
-    document.querySelectorAll('.quick-prompt-btn').forEach(btn => {
-       btn.addEventListener('click', () => {
-          if (chatInput) {
-            chatInput.value = btn.textContent.replace('✨ ', '');
-            handleSend();
-          }
-       });
-    });
-
     // --- MAP & WEATHER LOGIC ---
     const locationQuery = document.getElementById("locationQuery");
     const searchLocationBtn = document.getElementById("searchLocationBtn");
@@ -978,16 +882,15 @@
       }
 
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`);
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=3`);
         const data = await res.json();
         if (!data.length) throw new Error();
         
-        if (locationSelect) locationSelect.value = data[0].display_name.split(',')[0];
+        if (locationSelect) locationSelect.innerHTML = data.map(i => `<option value="${i.lat},${i.lon}">${i.display_name}</option>`).join('');
         setMap(data[0].lat, data[0].lon);
         if (weatherNote) weatherNote.textContent = "Found! Click 'Update'.";
       } catch (error) {
         if (weatherNote) weatherNote.textContent = "Location search error.";
-        showToast("Location not found.", "error");
       } finally {
         if (searchLocationBtn) {
           searchLocationBtn.innerHTML = "Search";
@@ -997,13 +900,10 @@
     }
 
     async function updateWeather() {
-      if (currentLat === null || currentLon === null) {
-        showToast("Please search for a location or use GPS first.", "error");
-        return;
-      }
-      const lat = currentLat;
-      const lon = currentLon;
-      setMap(lat, lon); // refresh map to be safe
+      const val = locationSelect?.value;
+      if (!val) return;
+      const [lat, lon] = val.split(",");
+      setMap(parseFloat(lat), parseFloat(lon));
       
       if (weatherBtn) {
         weatherBtn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>`;
@@ -1040,6 +940,7 @@
 
     if (searchLocationBtn) searchLocationBtn.addEventListener("click", searchLocations);
     if (locationQuery) locationQuery.addEventListener("keydown", (e) => { if (e.key === "Enter") searchLocations(); });
+    if (locationSelect) locationSelect.addEventListener("change", () => { if (locationSelect.value) setMap(...locationSelect.value.split(",")); });
     if (weatherBtn) weatherBtn.addEventListener("click", updateWeather);
 
     if (gpsBtn) {
@@ -1049,7 +950,7 @@
         navigator.geolocation.getCurrentPosition(async (pos) => {
           const lat = pos.coords.latitude, lon = pos.coords.longitude;
           setMap(lat, lon);
-          if (locationSelect) locationSelect.value = `GPS Location`;
+          if (locationSelect) locationSelect.innerHTML = `<option value="${lat},${lon}">📍 GPS Location</option>`;
           updateWeather();
           gpsBtn.innerHTML = `<i data-lucide="crosshair" class="w-4 h-4"></i>`;
           lucide.createIcons();
@@ -1091,7 +992,7 @@
             
             <div id="irr_status_${index}" class="text-xs text-center font-medium hidden mt-1 bg-slate-50 py-1.5 rounded-md border"></div>
             
-            <button id="irr_btn_${index}" onclick="calculateIrrigation(${index}, '${field.crop}')" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5">
+            <button id="irr_btn_${index}" onclick="calculateIrrigation(${index}, '${field.crop}')" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5">
                Check Irrigation Need
             </button>
             
@@ -1121,7 +1022,7 @@
       const btn = document.getElementById(`irr_btn_${index}`);
 
       if (!dateInput) {
-        showToast("Please select the date when you last watered this field.", "error");
+        alert("Please select the date when you last watered this field.");
         return;
       }
 
@@ -1134,7 +1035,7 @@
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
       if (diffDays < 0) {
-        showToast("Last irrigated date cannot be in the future.", "error");
+        alert("Last irrigated date cannot be in the future.");
         return;
       }
 
@@ -1151,7 +1052,7 @@
         }
         if (btn) {
           btn.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5 inline"></i> Start ${duration}m Timer`;
-          btn.className = "w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5";
+          btn.className = "w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5";
           btn.onclick = () => startIrrigation(index, duration);
         }
       } else {
@@ -1162,7 +1063,7 @@
         }
         if (btn) {
           btn.innerHTML = `<i data-lucide="refresh-ccw" class="w-3.5 h-3.5 inline"></i> Re-Calculate`;
-          btn.className = "w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5";
+          btn.className = "w-full bg-slate-800 hover:bg-slate-900 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm flex items-center justify-center gap-1.5";
         }
       }
       lucide.createIcons();
@@ -1194,7 +1095,7 @@
 
          if (rem <= 0) {
            clearInterval(fieldTimers[index]);
-           showToast(`Irrigation complete for Field ${index + 1}!`, "success");
+           alert(`Irrigation complete for Field ${index + 1}!`);
            stopIrrigation(index);
          }
        }
@@ -1216,7 +1117,7 @@
        if (btn) {
          btn.classList.remove("hidden");
          btn.innerHTML = "Check Irrigation Need";
-         btn.className = "w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm";
+         btn.className = "w-full bg-slate-800 hover:bg-slate-900 text-white py-2 rounded-lg text-xs font-semibold transition-all mt-1 shadow-sm";
          const crop = farmerProfile?.fields?.[index]?.crop || 'wheat';
          btn.onclick = () => calculateIrrigation(index, crop);
        }
@@ -1235,7 +1136,7 @@
       advBtn.addEventListener("click", async () => {
         const soil = document.getElementById("advSoil")?.value?.trim() || '';
         const season = document.getElementById("advSeason")?.value?.trim() || '';
-        if (!soil || !season) { showToast("Enter soil and season.", "error"); return; }
+        if (!soil || !season) { alert("Enter soil and season."); return; }
 
         const origHtml = advBtn.innerHTML;
         advBtn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Analyzing...`;
@@ -1246,7 +1147,7 @@
         const prompt = `Farmer context:\n${getFarmerContext()}\nSoil: ${soil}\nSeason: ${season}\nRecommend the TOP 4 best crops. Return strictly a JSON array like: [{"name":"Crop","emoji":"🌾","why":"Reason"}]`;
 
         try {
-          const res = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [{ parts: [{ text: prompt }] }],
@@ -1254,18 +1155,13 @@
             })
           });
           const data = await res.json();
-          let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
-          
-          // Safer JSON extraction directly targeting the array structure
-          const match = raw.match(/\[.*\]/s);
-          if (match) raw = match[0];
-          
+          const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
           const crops = JSON.parse(raw);
           
           const grid = document.getElementById("advGrid");
           if (grid) {
             grid.innerHTML = crops.slice(0,4).map(c => `
-              <div class="bg-brand-50 border border-brand-100 rounded-lg p-2 text-center flex flex-col">
+              <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-2 text-center flex flex-col">
                 <span class="text-xl mb-1">${c.emoji || '🌱'}</span>
                 <span class="font-bold text-slate-800 text-[11px]">${c.name}</span>
                 <span class="text-[9px] text-slate-500 leading-tight mt-1">${c.why}</span>
@@ -1278,128 +1174,10 @@
             advResults.classList.add("flex");
           }
         } catch (err) {
-          showToast("Advisor error. Please try again.", "error");
+          alert("Advisor error. Please try again.");
         } finally {
           advBtn.innerHTML = origHtml;
           advBtn.disabled = false;
-          lucide.createIcons();
-        }
-      });
-    }
-
-    // --- AI SUBSIDY MATCHER ---
-    const subsidyBtn = document.getElementById("subsidyBtn");
-    if(subsidyBtn) {
-      subsidyBtn.addEventListener("click", async () => {
-        if (!farmerProfile || !farmerProfile.name) {
-          showToast("Please complete your Farm Profile to find personalized schemes.", "error");
-          return;
-        }
-
-        const origHtml = subsidyBtn.innerHTML;
-        subsidyBtn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Searching Schemes...`;
-        subsidyBtn.disabled = true;
-        
-        const subsidyResults = document.getElementById("subsidyResults");
-        if (subsidyResults) subsidyResults.classList.add("hidden");
-
-        const prompt = `Farmer context:\n${getFarmerContext()}\nRecommend the TOP 3 Indian government agricultural schemes/subsidies most relevant to this exact profile. Return strictly a JSON array like: [{"scheme":"Scheme Name","desc":"Brief reason why it helps"}]`;
-
-        try {
-          const res = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: { responseMimeType: "application/json" }
-            })
-          });
-          const data = await res.json();
-          let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
-          
-          // Safer JSON extraction directly targeting the array structure
-          const match = raw.match(/\[.*\]/s);
-          if (match) raw = match[0];
-          
-          const schemes = JSON.parse(raw);
-
-          const list = document.getElementById("subsidyList");
-          if (list) {
-            list.innerHTML = schemes.slice(0,3).map(s => `
-              <div class="bg-brand-50 border border-brand-100 rounded-lg p-2.5 flex flex-col gap-1 shadow-sm">
-                <strong class="text-slate-800 text-[11px] flex items-center gap-1.5"><i data-lucide="check-circle" class="w-3 h-3 text-brand-600"></i> ${s.scheme}</strong>
-                <span class="text-[10px] text-slate-600 leading-snug pl-4">${s.desc}</span>
-              </div>
-            `).join('');
-          }
-
-          if (subsidyResults) {
-            subsidyResults.classList.remove("hidden");
-            subsidyResults.classList.add("flex");
-          }
-        } catch (err) {
-          showToast("Subsidy matcher error. Please try again.", "error");
-        } finally {
-          subsidyBtn.innerHTML = origHtml;
-          subsidyBtn.disabled = false;
-          lucide.createIcons();
-        }
-      });
-    }
-
-    // --- AI SEASONAL TASK PLANNER ---
-    const taskPlannerBtn = document.getElementById("taskPlannerBtn");
-    if(taskPlannerBtn) {
-      taskPlannerBtn.addEventListener("click", async () => {
-        if (!farmerProfile || !farmerProfile.fields || farmerProfile.fields.length === 0) {
-          showToast("Please complete your Farm Profile with fields to plan tasks.", "error");
-          return;
-        }
-
-        const origHtml = taskPlannerBtn.innerHTML;
-        taskPlannerBtn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Planning...`;
-        taskPlannerBtn.disabled = true;
-        
-        const taskResults = document.getElementById("taskResults");
-        if (taskResults) taskResults.classList.add("hidden");
-
-        const prompt = `Farmer context:\n${getFarmerContext()}\nWeather: ${getEnvironmentContext()}\nGenerate a timeline of 3 major upcoming agricultural tasks for the farmer's crops based on standard seasonal needs. Return strictly a JSON array like: [{"phase":"e.g. Next 7 Days", "task":"Specific action required based on crops/weather"}]`;
-
-        try {
-          const res = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: { responseMimeType: "application/json" }
-            })
-          });
-          const data = await res.json();
-          let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
-          
-          // Safer JSON extraction directly targeting the array structure
-          const match = raw.match(/\[.*\]/s);
-          if (match) raw = match[0];
-          
-          const tasks = JSON.parse(raw);
-
-          const list = document.getElementById("taskList");
-          if (list) {
-            list.innerHTML = tasks.slice(0,3).map(t => `
-              <div class="bg-brand-50 border border-brand-100 rounded-lg p-2.5 flex flex-col gap-1 shadow-sm border-l-4 border-l-brand-500">
-                <strong class="text-slate-800 text-[11px]">${t.phase}</strong>
-                <span class="text-[10px] text-slate-600 leading-snug">${t.task}</span>
-              </div>
-            `).join('');
-          }
-
-          if (taskResults) {
-            taskResults.classList.remove("hidden");
-            taskResults.classList.add("flex");
-          }
-        } catch (err) {
-          showToast("Task planner error. Please try again.", "error");
-        } finally {
-          taskPlannerBtn.innerHTML = origHtml;
-          taskPlannerBtn.disabled = false;
           lucide.createIcons();
         }
       });
